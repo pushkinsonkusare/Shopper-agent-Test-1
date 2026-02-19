@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Beauty Care Personal Assistant</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <span class="assistant-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="presentation">
+              <path
+                d="M12 2.5l1.6 4.5 4.5 1.6-4.5 1.6L12 14.7l-1.6-4.5-4.5-1.6 4.5-1.6L12 2.5zm6.1 9.6l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.4z"
+              />
+            </svg>
+          </span>
+          <div class="title">Shiseido personal assistant</div>
+        </div>
+        <div class="top-bar-actions">
+          <button class="top-bar-action" aria-label="More options">
+            <svg viewBox="0 0 24 24" role="presentation">
+              <circle cx="12" cy="5" r="1.6" />
+              <circle cx="12" cy="12" r="1.6" />
+              <circle cx="12" cy="19" r="1.6" />
+            </svg>
+          </button>
+          <button class="top-bar-action close" aria-label="Close">
+            <svg viewBox="0 0 24 24" role="presentation">
+              <path
+                d="M6.6 6.6l10.8 10.8M17.4 6.6L6.6 17.4"
+                stroke="currentColor"
+                stroke-width="2.4"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="chat" id="chat"></main>
+
+      <button class="scroll-to-bottom" id="scrollToBottom" aria-label="Scroll to bottom">
+        ↓
+      </button>
+
+      <footer class="input-bar">
+        <div class="input-wrapper">
+          <input
+            id="searchInput"
+            type="text"
+            placeholder="Type your message..."
+            aria-label="Search products"
+          />
+          <button id="searchButton" aria-label="Send message">
+            <span class="send-icon">➤</span>
+          </button>
+        </div>
+      </footer>
+    </div>
+
+    <script src="shopper-agent/dist/discovery.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
