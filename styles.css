@@ -808,6 +808,7 @@ img {
 }
 
 .cart-summary-row {
+  height: fit-content;
   padding: 12px 16px;
   display: flex;
   align-items: center;
@@ -816,6 +817,8 @@ img {
 }
 
 .cart-summary-text {
+  width: 100%;
+  height: fit-content;
   font-size: 14px;
   color: #2b2f36;
   line-height: 1.4;
@@ -828,8 +831,11 @@ img {
 }
 
 .cart-toggle {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  flex-shrink: 0;
   border-radius: 8px;
   border: 1px solid #d1d6dc;
   background: #fff;
@@ -873,9 +879,13 @@ img {
 }
 
 .cart-coupon-pills {
-  display: flex;
-  flex-wrap: nowrap;
+  display: none;
+  flex-wrap: wrap;
   gap: 4px;
+}
+
+.cart-card--expanded .cart-coupon-pills {
+  display: flex;
 }
 
 .cart-coupon-pill {
@@ -1050,6 +1060,17 @@ img {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.cart-item-coupon-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.cart-item-coupon-pill {
+  font-size: 11px;
 }
 
 .cart-item-meta {

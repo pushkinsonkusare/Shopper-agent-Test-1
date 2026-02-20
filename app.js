@@ -42,7 +42,10 @@ let selectedSupportLabel = null;
 let lastDiscoveryIntent = null;
 const cartState = {
   items: [],
-  appliedCoupons: [],
+  /** Item-level coupons: { [itemId]: string[] } (coupon codes per cart line) */
+  appliedItemCoupons: {},
+  /** Cart-level coupons: string[] (applied to subtotal) */
+  appliedCartCoupons: [],
 };
 let applePayModal = null;
 let applePayBreakdownModal = null;
@@ -190,6 +193,7 @@ function buildCartItem(product, options = {}, fallbackIndex = 0) {
       : options.color
         ? formatCartColor(options.color)
         : null;
+  const couponApplicable = (product.coupon_applicable || "").toString().trim();
   return {
     id: product.id ?? getProductKey(product, fallbackIndex),
     name: product.name || "Item",
@@ -200,6 +204,7 @@ function buildCartItem(product, options = {}, fallbackIndex = 0) {
     size: options.size || product.sizes?.[0] || "One size",
     fit: options.fit || null,
     imageUrl: getPlpPrimaryImage(product, fallbackIndex),
+    couponApplicable: couponApplicable ? normalizeCouponCode(couponApplicable) : "",
   };
 }
 
@@ -241,25 +246,45 @@ function getCouponRatesByScope(couponCodes = []) {
   return { itemRate, orderRate, combinedRate };
 }
 
-function calculateCartTotals(items, couponCodes = []) {
-  const { itemRate, orderRate, combinedRate } =
-    getCouponRatesByScope(couponCodes);
-  const subtotal = roundCurrency(
-    items.reduce((sum, item) => sum + item.price * item.qty, 0)
-  );
+/** Item-level discount rate for one item (sum of applied item-level coupon rates, capped at 1). */
+function getItemLevelDiscountRate(itemId, appliedItemCoupons = {}) {
+  const codes = appliedItemCoupons[itemId] || [];
+  const uniqueCodes = [...new Set(codes.map(normalizeCouponCode).filter(Boolean))];
+  let rate = 0;
+  for (const code of uniqueCodes) {
+    const def = getCouponDefinition(code);
+    if (def && def.scope !== "order") rate += def.rate ?? 0;
+  }
+  return Math.min(1, rate);
+}
+
+/** Cart-level discount rate from applied cart coupons only. */
+function getCartLevelDiscountRate(appliedCartCoupons = []) {
+  const { orderRate } = getCouponRatesByScope(appliedCartCoupons);
+  return orderRate;
+}
+
+function calculateCartTotals(items, appliedItemCoupons = {}, appliedCartCoupons = []) {
   const itemCount = items.reduce((sum, item) => sum + item.qty, 0);
-  const promotions = roundCurrency(subtotal * itemRate);
-  const orderDiscount = roundCurrency(subtotal * orderRate);
+  const subtotalAfterItemDiscount = roundCurrency(
+    items.reduce((sum, item) => {
+      const lineRaw = item.price * item.qty;
+      const itemRate = getItemLevelDiscountRate(item.id, appliedItemCoupons);
+      return sum + roundCurrency(lineRaw * (1 - itemRate));
+    }, 0)
+  );
+  const orderRate = getCartLevelDiscountRate(appliedCartCoupons);
+  const orderDiscount = roundCurrency(subtotalAfterItemDiscount * orderRate);
   const shipping = items.length ? 60 : 0;
-  const shippingDiscount = combinedRate ? shipping : 0;
-  const taxableAmount = Math.max(0, subtotal - promotions - orderDiscount);
+  const shippingDiscount = orderRate ? shipping : 0;
+  const taxableAmount = Math.max(0, subtotalAfterItemDiscount - orderDiscount);
   const taxes = roundCurrency(taxableAmount * 0.05);
   const total = roundCurrency(
-    subtotal - promotions - orderDiscount + shipping - shippingDiscount + taxes
+    subtotalAfterItemDiscount - orderDiscount + shipping - shippingDiscount + taxes
   );
   return {
-    subtotal,
-    promotions,
+    subtotal: subtotalAfterItemDiscount,
+    promotions: 0,
     orderDiscount,
     shipping,
     shippingDiscount,
@@ -290,7 +315,11 @@ function formatDeliveryDate(daysFromNow = 2) {
   return `${weekday} the ${day}${suffix}`;
 }
 
-function createOrderSummaryBubble({ items = [], appliedCoupons = [] } = {}) {
+function createOrderSummaryBubble({
+  items = [],
+  appliedItemCoupons = {},
+  appliedCartCoupons = [],
+} = {}) {
   const bubble = document.createElement("div");
   bubble.className = "bubble assistant order-summary-bubble";
 
@@ -337,11 +366,11 @@ function createOrderSummaryBubble({ items = [], appliedCoupons = [] } = {}) {
   const itemsList = document.createElement("div");
   itemsList.className = "order-summary-items";
   const fallbackImages = ["Bag1.png", "Bag2.png", "Bag3.png", "Bag4.png"];
-  const { itemRate, orderRate } = getCouponRatesByScope(appliedCoupons);
-  const combinedRate = Math.min(1, itemRate + orderRate);
-  const shouldShowDiscount = combinedRate > 0;
 
   items.forEach((item, index) => {
+    const itemRate = getItemLevelDiscountRate(item.id, appliedItemCoupons);
+    const shouldShowDiscount = itemRate > 0;
+
     const itemRow = document.createElement("div");
     itemRow.className = "cart-item order-summary-item";
 
@@ -364,8 +393,8 @@ function createOrderSummaryBubble({ items = [], appliedCoupons = [] } = {}) {
       thumb.textContent = item.name.charAt(0).toUpperCase();
     }
 
-    const details = document.createElement("div");
-    details.className = "cart-item-details order-summary-details";
+    const detailsInner = document.createElement("div");
+    detailsInner.className = "cart-item-details order-summary-details";
     const name = document.createElement("div");
     name.className = "cart-item-name";
     name.textContent = item.name;
@@ -375,31 +404,31 @@ function createOrderSummaryBubble({ items = [], appliedCoupons = [] } = {}) {
       <div>Size ${item.size}</div>
       <div>Qty ${item.qty}</div>
     `;
-    details.append(name, meta);
+    detailsInner.append(name, meta);
 
     const price = document.createElement("div");
     price.className = "cart-item-price";
     if (shouldShowDiscount) {
       const msrp = document.createElement("div");
       msrp.className = "cart-item-msrp";
-      msrp.textContent = formatCurrency(item.price);
+      msrp.textContent = formatCurrency(item.price * item.qty);
       price.append(msrp);
     }
     const sale = document.createElement("div");
     sale.className = "cart-item-sale";
     const lineTotal = item.price * item.qty;
-    const discountedTotal = roundCurrency(lineTotal * (1 - combinedRate));
+    const discountedTotal = roundCurrency(lineTotal * (1 - itemRate));
     sale.textContent = formatCurrency(discountedTotal);
     price.append(sale);
 
-    itemRow.append(thumb, details, price);
+    itemRow.append(thumb, detailsInner, price);
     itemsList.append(itemRow);
   });
 
   const totals = document.createElement("div");
   totals.className = "order-summary-totals";
-  const totalsData = calculateCartTotals(items, appliedCoupons);
-  const appliedCouponLabels = appliedCoupons.map(formatCouponLabel).filter(Boolean);
+  const totalsData = calculateCartTotals(items, appliedItemCoupons, appliedCartCoupons);
+  const appliedCouponLabels = (appliedCartCoupons || []).map(formatCouponLabel).filter(Boolean);
 
   const couponAppliedRow = document.createElement("div");
   couponAppliedRow.className = "order-summary-total-row order-summary-coupon-row";
@@ -506,12 +535,17 @@ function createOrderNbaChips() {
   return row;
 }
 
-function completeApplePayDemo({ items = [], appliedCoupons = [] } = {}) {
+function completeApplePayDemo({
+  items = [],
+  appliedItemCoupons = {},
+  appliedCartCoupons = [],
+} = {}) {
   addBubble("user", "Pay with Apple Pay");
   runWithLatency(() => {
     const summaryBubble = createOrderSummaryBubble({
       items,
-      appliedCoupons,
+      appliedItemCoupons,
+      appliedCartCoupons,
     });
     const orderChips = createOrderNbaChips();
     chatEl.append(summaryBubble, orderChips);
@@ -582,12 +616,16 @@ function buildApplePayDisplayItems(items, totals) {
   return displayItems;
 }
 
-async function tryApplePayPayment({ items = [], appliedCoupons = [] } = {}) {
+async function tryApplePayPayment({
+  items = [],
+  appliedItemCoupons = {},
+  appliedCartCoupons = [],
+} = {}) {
   if (!window.PaymentRequest || !window.isSecureContext) {
     return "unavailable";
   }
 
-  const totals = calculateCartTotals(items, appliedCoupons);
+  const totals = calculateCartTotals(items, appliedItemCoupons, appliedCartCoupons);
   const details = {
     total: {
       label: APPLE_PAY_MERCHANT_NAME,
@@ -643,16 +681,24 @@ async function tryApplePayPayment({ items = [], appliedCoupons = [] } = {}) {
   }
 }
 
-async function startApplePayFlow({ items = [], appliedCoupons = [] } = {}) {
-  const result = await tryApplePayPayment({ items, appliedCoupons });
+async function startApplePayFlow({
+  items = [],
+  appliedItemCoupons = {},
+  appliedCartCoupons = [],
+} = {}) {
+  const result = await tryApplePayPayment({
+    items,
+    appliedItemCoupons,
+    appliedCartCoupons,
+  });
   if (result === "success") {
-    completeApplePayDemo({ items, appliedCoupons });
+    completeApplePayDemo({ items, appliedItemCoupons, appliedCartCoupons });
     return;
   }
   if (result === "aborted") {
     return;
   }
-  openApplePayModal({ items, appliedCoupons });
+  openApplePayModal({ items, appliedItemCoupons, appliedCartCoupons });
 }
 
 function createApplePayBreakdownModal() {
@@ -863,7 +909,8 @@ function createApplePayModal() {
   }
 
   let latestItems = [];
-  let latestCoupons = [];
+  let latestItemCoupons = {};
+  let latestCartCoupons = [];
 
   const closeModal = () => {
     modal.classList.remove("is-visible");
@@ -871,13 +918,20 @@ function createApplePayModal() {
     document.body.classList.remove("modal-open");
   };
 
-  const openModal = ({ total, itemsLabel, items = [], appliedCoupons = [] }) => {
+  const openModal = ({
+    total,
+    itemsLabel,
+    items = [],
+    appliedItemCoupons = {},
+    appliedCartCoupons = [],
+  }) => {
     totalValue.textContent = formatCurrency(total);
     if (itemCount) {
       itemCount.textContent = itemsLabel;
     }
     latestItems = items;
-    latestCoupons = appliedCoupons;
+    latestItemCoupons = appliedItemCoupons;
+    latestCartCoupons = appliedCartCoupons;
     modal.classList.add("is-visible");
     modal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
@@ -889,20 +943,26 @@ function createApplePayModal() {
     closeModal();
     const result = await tryApplePayPayment({
       items: latestItems,
-      appliedCoupons: latestCoupons,
+      appliedItemCoupons: latestItemCoupons,
+      appliedCartCoupons: latestCartCoupons,
     });
     if (result === "aborted") {
       return;
     }
     completeApplePayDemo({
       items: latestItems,
-      appliedCoupons: latestCoupons,
+      appliedItemCoupons: latestItemCoupons,
+      appliedCartCoupons: latestCartCoupons,
     });
   });
 
   if (infoButton) {
     infoButton.addEventListener("click", () => {
-      const totals = calculateCartTotals(latestItems, latestCoupons);
+      const totals = calculateCartTotals(
+        latestItems,
+        latestItemCoupons,
+        latestCartCoupons
+      );
       const merchantName =
         (merchantLabel?.textContent || "")
           .replace(/^Pay to\s+/i, "")
@@ -924,18 +984,23 @@ function createApplePayModal() {
   return { openModal };
 }
 
-function openApplePayModal({ items = [], appliedCoupons = [] } = {}) {
+function openApplePayModal({
+  items = [],
+  appliedItemCoupons = {},
+  appliedCartCoupons = [],
+} = {}) {
   if (!applePayModal) {
     applePayModal = createApplePayModal();
   }
-  const totals = calculateCartTotals(items, appliedCoupons);
+  const totals = calculateCartTotals(items, appliedItemCoupons, appliedCartCoupons);
   const itemsLabel =
     totals.itemCount === 1 ? "1 item" : `${totals.itemCount} items`;
   applePayModal.openModal({
     total: totals.total,
     itemsLabel,
     items,
-    appliedCoupons,
+    appliedItemCoupons,
+    appliedCartCoupons,
   });
 }
 
@@ -946,9 +1011,15 @@ function normalizeCouponCode(code) {
 
 const COUPON_DEFINITIONS = {
   save10: { rate: 0.1, label: "Save 10" },
+  save15: { rate: 0.15, label: "Save 15" },
+  save20: { rate: 0.2, label: "Save 20" },
   sitewide10: { rate: 0.1, label: "Sitewide 10", scope: "order" },
+  cartlevel15: { rate: 0.15, label: "Cart Level 15", scope: "order" },
   anniversary15: { rate: 0.15, label: "Anniversary 15" },
   orderlevel15: { rate: 0.15, label: "Order Level 15", scope: "order" },
+  order10: { rate: 0.1, label: "10% off", scope: "order" },
+  order15: { rate: 0.15, label: "15% off", scope: "order" },
+  order20: { rate: 0.2, label: "20% off", scope: "order" },
   christmas20: { rate: 0.2, label: "Christmas 20" },
   newyear15: { rate: 0.15, label: "New Year 15" },
   first25: { rate: 0.25, label: "First 25" },
@@ -1011,7 +1082,8 @@ function createCartBubble(state, addedItem, options = {}) {
     "Your cart has ",
     summaryCount,
     " with a total of ",
-    summaryTotal
+    summaryTotal,
+    ". Use options below for checkout."
   );
 
   const toggleButton = document.createElement("button");
@@ -1028,9 +1100,10 @@ function createCartBubble(state, addedItem, options = {}) {
   couponRow.className = "cart-coupon-row";
   const couponInput = document.createElement("input");
   couponInput.type = "text";
-  couponInput.placeholder = "enter coupon code";
+  couponInput.placeholder = "Enter coupon code...";
   couponInput.value = "";
   couponInput.className = "cart-coupon-input";
+  couponInput.setAttribute("aria-label", "Enter coupon code");
   const couponButton = document.createElement("button");
   couponButton.type = "button";
   couponButton.className = "cart-coupon-apply";
@@ -1052,11 +1125,14 @@ function createCartBubble(state, addedItem, options = {}) {
   itemsList.className = "cart-items";
 
   const fallbackImages = ["Bag1.png", "Bag2.png", "Bag3.png", "Bag4.png"];
+  const appliedItemCoupons = state.appliedItemCoupons || {};
+  const appliedCartCoupons = state.appliedCartCoupons || [];
 
-  const { itemRate, orderRate } = getCouponRatesByScope(state.appliedCoupons);
-  const combinedRate = Math.min(1, itemRate + orderRate);
-  const shouldShowDiscount = combinedRate > 0;
   state.items.forEach((item, index) => {
+    const itemRate = getItemLevelDiscountRate(item.id, appliedItemCoupons);
+    const shouldShowItemDiscount = itemRate > 0;
+    const itemCodes = appliedItemCoupons[item.id] || [];
+
     const itemRow = document.createElement("div");
     itemRow.className = "cart-item";
 
@@ -1090,21 +1166,63 @@ function createCartBubble(state, addedItem, options = {}) {
       <div>Size ${item.size}</div>
       <div>Qty ${item.qty}</div>
     `;
-
     details.append(name, meta);
+
+    if (itemCodes.length > 0) {
+      const itemPills = document.createElement("div");
+      itemPills.className = "cart-item-coupon-pills";
+      itemCodes.forEach((code) => {
+        const normalized = normalizeCouponCode(code);
+        if (!normalized) return;
+        const pill = document.createElement("span");
+        pill.className = "cart-coupon-pill cart-item-coupon-pill";
+        const label = document.createElement("span");
+        label.className = "cart-coupon-pill-label";
+        label.textContent = formatCouponPillLabel(normalized);
+        const closeIcon = document.createElement("span");
+        closeIcon.className = "cart-coupon-pill-close";
+        closeIcon.setAttribute("aria-hidden", "true");
+        closeIcon.textContent = "×";
+        closeIcon.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!state.appliedItemCoupons[item.id]) return;
+          const pillLabel = formatCouponPillLabel(normalized);
+          addBubble("user", `remove coupon ${pillLabel}`);
+          state.appliedItemCoupons[item.id] = state.appliedItemCoupons[item.id].filter(
+            (c) => normalizeCouponCode(c) !== normalized
+          );
+          if (state.appliedItemCoupons[item.id].length === 0) {
+            delete state.appliedItemCoupons[item.id];
+          }
+          applyTotals();
+          runWithLatency(() => {
+            const cartBubble = createCartBubble(state, null, {
+              headerText: `Sure, coupon ${pillLabel} was removed from your cart.`,
+            });
+            chatEl.append(cartBubble);
+            scrollChatElementIntoView(cartBubble);
+            updateScrollButton();
+          }, LATENCY_MS, "Updating cart...");
+        });
+        pill.append(label, closeIcon);
+        itemPills.append(pill);
+      });
+      details.append(itemPills);
+    }
 
     const price = document.createElement("div");
     price.className = "cart-item-price";
-    if (shouldShowDiscount) {
+    if (shouldShowItemDiscount) {
       const msrp = document.createElement("div");
       msrp.className = "cart-item-msrp";
-      msrp.textContent = formatCurrency(item.price);
+      msrp.textContent = formatCurrency(item.price * item.qty);
       price.append(msrp);
     }
     const sale = document.createElement("div");
     sale.className = "cart-item-sale";
     const lineTotal = item.price * item.qty;
-    const discountedTotal = roundCurrency(lineTotal * (1 - combinedRate));
+    const discountedTotal = roundCurrency(lineTotal * (1 - itemRate));
     sale.textContent = formatCurrency(discountedTotal);
     price.append(sale);
 
@@ -1118,10 +1236,6 @@ function createCartBubble(state, addedItem, options = {}) {
   const subtotalRow = document.createElement("div");
   subtotalRow.className = "cart-total-row";
   subtotalRow.innerHTML = `<span>Subtotal</span><span class="cart-total-value"></span>`;
-
-  const promoRow = document.createElement("div");
-  promoRow.className = "cart-total-row";
-  promoRow.innerHTML = `<span>Promotions</span><span class="cart-total-value"></span>`;
 
   const couponDiscountRow = document.createElement("div");
   couponDiscountRow.className = "cart-total-row";
@@ -1145,7 +1259,6 @@ function createCartBubble(state, addedItem, options = {}) {
 
   totals.append(
     subtotalRow,
-    promoRow,
     couponDiscountRow,
     shippingRow,
     shippingDiscountRow,
@@ -1178,7 +1291,7 @@ function createCartBubble(state, addedItem, options = {}) {
 
   const couponSection = document.createElement("div");
   couponSection.className = "cart-coupon-section";
-  couponSection.append(couponRow, couponPills);
+  couponSection.append(couponPills, couponRow);
 
   card.append(
     header,
@@ -1191,11 +1304,15 @@ function createCartBubble(state, addedItem, options = {}) {
   bubble.append(card);
 
   const applyTotals = () => {
-    const totalsData = calculateCartTotals(state.items, state.appliedCoupons);
-    const appliedCoupons = (state.appliedCoupons || []).filter(Boolean);
+    const totalsData = calculateCartTotals(
+      state.items,
+      state.appliedItemCoupons || {},
+      state.appliedCartCoupons || []
+    );
+    const cartCoupons = (state.appliedCartCoupons || []).filter(Boolean);
     couponPills.textContent = "";
-    couponPills.hidden = appliedCoupons.length === 0;
-    appliedCoupons.forEach((coupon) => {
+    couponPills.hidden = cartCoupons.length === 0;
+    cartCoupons.forEach((coupon) => {
       const normalized = normalizeCouponCode(coupon);
       if (!normalized) return;
       const pill = document.createElement("span");
@@ -1212,7 +1329,7 @@ function createCartBubble(state, addedItem, options = {}) {
         event.stopPropagation();
         const pillLabel = formatCouponPillLabel(normalized);
         addBubble("user", `remove coupon ${pillLabel}`);
-        state.appliedCoupons = state.appliedCoupons.filter(
+        state.appliedCartCoupons = (state.appliedCartCoupons || []).filter(
           (code) => normalizeCouponCode(code) !== normalized
         );
         applyTotals();
@@ -1233,13 +1350,10 @@ function createCartBubble(state, addedItem, options = {}) {
     subtotalRow.querySelector(".cart-total-value").textContent = formatCurrency(
       totalsData.subtotal
     );
-    promoRow.querySelector(".cart-total-value").textContent = totalsData.promotions
-      ? `-${formatCurrency(totalsData.promotions)}`
-      : formatCurrency(0);
     couponDiscountRow.querySelector(".cart-total-value").textContent =
       totalsData.orderDiscount
         ? `-${formatCurrency(totalsData.orderDiscount)}`
-        : formatCurrency(0);
+        : "-";
     shippingRow.querySelector(".cart-total-value").textContent = "-";
     shippingDiscountRow.querySelector(".cart-total-value").textContent = "-";
     taxesRow.querySelector(".cart-total-value").textContent = formatCurrency(
@@ -1276,7 +1390,8 @@ function createCartBubble(state, addedItem, options = {}) {
   applePay.addEventListener("click", () => {
     startApplePayFlow({
       items: state.items,
-      appliedCoupons: state.appliedCoupons,
+      appliedItemCoupons: state.appliedItemCoupons || {},
+      appliedCartCoupons: state.appliedCartCoupons || [],
     });
   });
 
@@ -1298,18 +1413,44 @@ function createCartBubble(state, addedItem, options = {}) {
         updateCouponRowState();
         return;
       }
-      const existingIndex = state.appliedCoupons.indexOf(normalized);
-      if (existingIndex === -1) {
-        state.appliedCoupons.unshift(normalized);
-      } else if (existingIndex > 0) {
-        state.appliedCoupons.splice(existingIndex, 1);
-        state.appliedCoupons.unshift(normalized);
+      const isCartLevel = couponDefinition.scope === "order";
+      if (isCartLevel) {
+        state.appliedCartCoupons = state.appliedCartCoupons || [];
+        const existingIndex = state.appliedCartCoupons.indexOf(normalized);
+        if (existingIndex === -1) {
+          state.appliedCartCoupons.unshift(normalized);
+        } else if (existingIndex > 0) {
+          state.appliedCartCoupons.splice(existingIndex, 1);
+          state.appliedCartCoupons.unshift(normalized);
+        }
+      } else {
+        const eligibleItemIds = state.items.filter(
+          (item) => item.couponApplicable === normalized
+        ).map((item) => item.id);
+        if (eligibleItemIds.length === 0) {
+          addBubble(
+            "assistant",
+            `This coupon doesn't apply to any item in your cart. Add a product that qualifies for ${formatCouponPillLabel(normalized)} to use it.`
+          );
+          couponInput.value = "";
+          updateCouponRowState();
+          return;
+        }
+        state.appliedItemCoupons = state.appliedItemCoupons || {};
+        eligibleItemIds.forEach((id) => {
+          const list = state.appliedItemCoupons[id] || [];
+          if (!list.includes(normalized)) state.appliedItemCoupons[id] = [...list, normalized];
+          else state.appliedItemCoupons[id] = list;
+        });
       }
       couponInput.value = "";
-      couponInput.placeholder = "enter coupon code";
+      couponInput.placeholder = "Enter coupon code...";
       updateCouponRowState();
+      const successHeader = isCartLevel
+        ? `Success! Coupon code '${formatCouponPillLabel(normalized)}' has been applied to your cart.`
+        : `Success! Coupon code '${formatCouponPillLabel(normalized)}' has been applied to your cart.`;
       const cartBubble = createCartBubble(state, null, {
-        headerText: `Success. ${formatCouponLabel(normalized)} was successfully applied to the cart.`,
+        headerText: successHeader,
       });
       chatEl.append(cartBubble);
       scrollChatElementIntoView(cartBubble);
@@ -4173,7 +4314,11 @@ function createPdpBubble(product) {
       size: selectedSize,
       fit: selectedFinish,
     });
-    startApplePayFlow({ items: [item], appliedCoupons: [] });
+    startApplePayFlow({
+      items: [item],
+      appliedItemCoupons: {},
+      appliedCartCoupons: [],
+    });
   });
 
   addToCart.addEventListener("click", () => {
