@@ -46,6 +46,8 @@ const cartState = {
   appliedItemCoupons: {},
   /** Cart-level coupons: string[] (applied to subtotal) */
   appliedCartCoupons: [],
+  /** Valid coupons added but not applicable yet (e.g. no qualifying items / order below min): shown as disabled pills, not used in totals */
+  inactiveCoupons: [],
 };
 let applePayModal = null;
 let applePayBreakdownModal = null;
@@ -454,18 +456,18 @@ function createOrderSummaryBubble({
 
     const price = document.createElement("div");
     price.className = "cart-item-price";
-    if (shouldShowDiscount) {
-      const msrp = document.createElement("div");
-      msrp.className = "cart-item-msrp";
-      msrp.textContent = formatCurrency(item.price * item.qty);
-      price.append(msrp);
-    }
     const sale = document.createElement("div");
     sale.className = "cart-item-sale";
     const lineTotal = item.price * item.qty;
     const discountedTotal = roundCurrency(lineTotal * (1 - itemRate));
     sale.textContent = formatCurrency(discountedTotal);
     price.append(sale);
+    if (shouldShowDiscount) {
+      const msrp = document.createElement("div");
+      msrp.className = "cart-item-msrp";
+      msrp.textContent = formatCurrency(item.price * item.qty);
+      price.append(msrp);
+    }
 
     itemRow.append(thumb, detailsInner, price);
     itemsList.append(itemRow);
@@ -1066,6 +1068,7 @@ const COUPON_DEFINITIONS = {
   order10: { rate: 0.1, label: "10% off", scope: "order" },
   order15: { rate: 0.15, label: "15% off", scope: "order" },
   order20: { rate: 0.2, label: "20% off", scope: "order" },
+  order1500: { rate: 0.15, label: "Order $1500", scope: "order", minOrder: 1500 },
   christmas20: { rate: 0.2, label: "Christmas 20" },
   newyear15: { rate: 0.15, label: "New Year 15" },
   first25: { rate: 0.25, label: "First 25" },
@@ -1075,6 +1078,55 @@ function getCouponDefinition(code) {
   const normalized = normalizeCouponCode(code);
   if (!normalized) return null;
   return COUPON_DEFINITIONS[normalized] ?? null;
+}
+
+/** Returns whether an order-level coupon currently qualifies (e.g. meets minOrder). */
+function orderCouponQualifies(normalized, items, appliedItemCoupons = {}) {
+  const def = getCouponDefinition(normalized);
+  if (!def || def.scope !== "order") return false;
+  const minOrder = def.minOrder;
+  if (minOrder == null) return true;
+  const { subtotal } = calculateCartTotals(items, appliedItemCoupons, []);
+  return subtotal >= minOrder;
+}
+
+/** Returns whether an item-level coupon has any qualifying items in the cart. */
+function itemCouponQualifies(normalized, items) {
+  return items.some((item) => item.couponApplicable === normalized);
+}
+
+/** Move inactive coupons to applied when they become eligible; mutates state. */
+function reconcileInactiveCoupons(state) {
+  const inactive = state.inactiveCoupons || [];
+  if (inactive.length === 0) return;
+  const items = state.items || [];
+  let appliedItemCoupons = { ...(state.appliedItemCoupons || {}) };
+  let appliedCartCoupons = [...(state.appliedCartCoupons || [])];
+  const stillInactive = [];
+  for (const code of inactive) {
+    const def = getCouponDefinition(code);
+    if (!def) continue;
+    if (def.scope === "order") {
+      if (orderCouponQualifies(code, items, appliedItemCoupons)) {
+        if (!appliedCartCoupons.includes(code)) appliedCartCoupons.unshift(code);
+      } else {
+        stillInactive.push(code);
+      }
+    } else {
+      const eligibleIds = items.filter((item) => item.couponApplicable === code).map((item) => item.id);
+      if (eligibleIds.length > 0) {
+        eligibleIds.forEach((id) => {
+          const list = appliedItemCoupons[id] || [];
+          if (!list.includes(code)) appliedItemCoupons[id] = [...list, code];
+        });
+      } else {
+        stillInactive.push(code);
+      }
+    }
+  }
+  state.appliedItemCoupons = appliedItemCoupons;
+  state.appliedCartCoupons = appliedCartCoupons;
+  state.inactiveCoupons = stillInactive;
 }
 
 function getCouponDiscountRate(code) {
@@ -1114,6 +1166,17 @@ function createCartBubble(state, addedItem, options = {}) {
 
   const divider = document.createElement("div");
   divider.className = "cart-divider";
+
+  reconcileInactiveCoupons(state);
+  const inactiveCoupons = state.inactiveCoupons || [];
+  const inactiveAlert = document.createElement("div");
+  inactiveAlert.className = "cart-inactive-coupon-alert";
+  const firstInactive = inactiveCoupons.length > 0 ? inactiveCoupons[0] : null;
+  inactiveAlert.textContent =
+    firstInactive != null
+      ? `Oh Snap!. Coupon '${formatCouponPillLabel(firstInactive)}' has been added but does not apply to any items in your cart. It will auto apply when eligible.`
+      : "";
+  inactiveAlert.hidden = inactiveCoupons.length === 0;
 
   const summaryRow = document.createElement("div");
   summaryRow.className = "cart-summary-row";
@@ -1290,18 +1353,18 @@ function createCartBubble(state, addedItem, options = {}) {
 
     const price = document.createElement("div");
     price.className = "cart-item-price";
-    if (shouldShowItemDiscount) {
-      const msrp = document.createElement("div");
-      msrp.className = "cart-item-msrp";
-      msrp.textContent = formatCurrency(item.price * item.qty);
-      price.append(msrp);
-    }
     const sale = document.createElement("div");
     sale.className = "cart-item-sale";
     const lineTotal = item.price * item.qty;
     const discountedTotal = roundCurrency(lineTotal * (1 - totalItemRate));
     sale.textContent = formatCurrency(discountedTotal);
     price.append(sale);
+    if (shouldShowItemDiscount) {
+      const msrp = document.createElement("div");
+      msrp.className = "cart-item-msrp";
+      msrp.textContent = formatCurrency(item.price * item.qty);
+      price.append(msrp);
+    }
 
     itemRow.append(thumb, details, price);
     itemsList.append(itemRow);
@@ -1378,6 +1441,7 @@ function createCartBubble(state, addedItem, options = {}) {
   card.append(
     header,
     divider,
+    inactiveAlert,
     summaryRow,
     expandedSection,
     couponSection,
@@ -1391,10 +1455,12 @@ function createCartBubble(state, addedItem, options = {}) {
       state.appliedItemCoupons || {},
       state.appliedCartCoupons || []
     );
-    const cartCoupons = (state.appliedCartCoupons || []).filter(Boolean);
+    const appliedCart = (state.appliedCartCoupons || []).filter(Boolean);
+    const inactive = (state.inactiveCoupons || []).filter(Boolean);
+    const hasAnyPills = appliedCart.length > 0 || inactive.length > 0;
     couponPills.textContent = "";
-    couponPills.hidden = cartCoupons.length === 0;
-    cartCoupons.forEach((coupon) => {
+    couponPills.hidden = !hasAnyPills;
+    appliedCart.forEach((coupon) => {
       const normalized = normalizeCouponCode(coupon);
       if (!normalized) return;
       const pill = document.createElement("span");
@@ -1412,6 +1478,39 @@ function createCartBubble(state, addedItem, options = {}) {
         const pillLabel = formatCouponPillLabel(normalized);
         addBubble("user", `remove coupon ${pillLabel}`);
         state.appliedCartCoupons = (state.appliedCartCoupons || []).filter(
+          (code) => normalizeCouponCode(code) !== normalized
+        );
+        applyTotals();
+        runWithLatency(() => {
+          const cartBubble = createCartBubble(state, null, {
+            headerText: `Sure, coupon ${pillLabel} was removed from the cart.`,
+          });
+          chatEl.append(cartBubble);
+          scrollChatElementIntoView(cartBubble);
+          updateScrollButton();
+        }, LATENCY_MS, "Updating cart...");
+      });
+      pill.append(label, closeIcon);
+      couponPills.append(pill);
+    });
+    inactive.forEach((coupon) => {
+      const normalized = normalizeCouponCode(coupon);
+      if (!normalized) return;
+      const pill = document.createElement("span");
+      pill.className = "cart-coupon-pill cart-coupon-pill--disabled";
+      const label = document.createElement("span");
+      label.className = "cart-coupon-pill-label";
+      label.textContent = formatCouponPillLabel(normalized);
+      const closeIcon = document.createElement("span");
+      closeIcon.className = "cart-coupon-pill-close";
+      closeIcon.setAttribute("aria-hidden", "true");
+      closeIcon.textContent = "×";
+      closeIcon.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const pillLabel = formatCouponPillLabel(normalized);
+        addBubble("user", `remove coupon ${pillLabel}`);
+        state.inactiveCoupons = (state.inactiveCoupons || []).filter(
           (code) => normalizeCouponCode(code) !== normalized
         );
         applyTotals();
@@ -1513,7 +1612,22 @@ function createCartBubble(state, addedItem, options = {}) {
         return;
       }
       const isCartLevel = couponDefinition.scope === "order";
+      const pillLabel = formatCouponPillLabel(normalized);
+      const inactiveMessage = `Oh Snap!. Coupon '${pillLabel}' has been added but does not apply to any items in your cart. It will auto apply when eligible.`;
+
       if (isCartLevel) {
+        if (!orderCouponQualifies(normalized, state.items || [], state.appliedItemCoupons || {})) {
+          state.inactiveCoupons = state.inactiveCoupons || [];
+          if (!state.inactiveCoupons.includes(normalized)) state.inactiveCoupons.push(normalized);
+          addBubble("assistant", inactiveMessage);
+          couponInput.value = "";
+          updateCouponRowState();
+          const cartBubble = createCartBubble(state, null, { headerText: inactiveMessage });
+          chatEl.append(cartBubble);
+          scrollChatElementIntoView(cartBubble);
+          updateScrollButton();
+          return;
+        }
         state.appliedCartCoupons = state.appliedCartCoupons || [];
         const existingIndex = state.appliedCartCoupons.indexOf(normalized);
         if (existingIndex === -1) {
@@ -1527,12 +1641,15 @@ function createCartBubble(state, addedItem, options = {}) {
           (item) => item.couponApplicable === normalized
         ).map((item) => item.id);
         if (eligibleItemIds.length === 0) {
-          addBubble(
-            "assistant",
-            `This coupon doesn't apply to any item in your cart. Add a product that qualifies for ${formatCouponPillLabel(normalized)} to use it.`
-          );
+          state.inactiveCoupons = state.inactiveCoupons || [];
+          if (!state.inactiveCoupons.includes(normalized)) state.inactiveCoupons.push(normalized);
+          addBubble("assistant", inactiveMessage);
           couponInput.value = "";
           updateCouponRowState();
+          const cartBubble = createCartBubble(state, null, { headerText: inactiveMessage });
+          chatEl.append(cartBubble);
+          scrollChatElementIntoView(cartBubble);
+          updateScrollButton();
           return;
         }
         state.appliedItemCoupons = state.appliedItemCoupons || {};
@@ -1546,8 +1663,8 @@ function createCartBubble(state, addedItem, options = {}) {
       couponInput.placeholder = "Enter coupon code...";
       updateCouponRowState();
       const successHeader = isCartLevel
-        ? `Success! Coupon code '${formatCouponPillLabel(normalized)}' has been applied to your cart.`
-        : `Success! Coupon code '${formatCouponPillLabel(normalized)}' has been applied to your cart.`;
+        ? `Success! Coupon code '${pillLabel}' has been applied to your cart.`
+        : `Success! Coupon code '${pillLabel}' has been applied to your cart.`;
       const cartBubble = createCartBubble(state, null, {
         headerText: successHeader,
       });
