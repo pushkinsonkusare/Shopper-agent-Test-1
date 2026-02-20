@@ -68,7 +68,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/c9d2da5904e71526825037355f89d182.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/00ec0ad32b6c38d3a72517047920a515.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "5% off on new launches",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-2",
@@ -137,7 +141,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/057e0e84dc91afb270e58edfa452decc.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/418797286193554189fe84caad3d4e95.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-3",
@@ -208,7 +216,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/1885b9f699e18d2f9d492b53873ee18d.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/188f542cc17ebfa23a153ea826635cd1.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-4",
@@ -291,7 +304,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/2f2369e109303e61589cda7b932be43b.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/3af9f9a3c0d0b7d7ec337a8ea8b41b28.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials",
+        "5% off on new launches",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-5",
@@ -375,7 +393,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/c74cf015de9f7f6ab1a52638598be8c4.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/7aafa977d5e9e81bc56cb9d446e4b49e.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials",
+        "15% off on new range",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-6",
@@ -435,7 +458,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/f11c3f2a4b40aa705f36f58b18f471bb.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/8ccedca600abbc88ffc699fa8d374650.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-7",
@@ -511,7 +539,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/7ba20b44548ed5b0416849e46ae2dc99.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/6ebce081f17bb5abc59e428abe034284.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-8",
@@ -585,7 +618,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/52784066ecca5895cf1335cd88014eff.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/0f294f51b60d111e42ebbf5a0d886d97.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-9",
@@ -668,7 +705,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/96b3cdd2a91afbce36d28afe0d0fce21.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/c95bc30224ee5627980a55141de0f875.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-10",
@@ -705,7 +747,10 @@
       "categories": [
         "Moisturizers & Creams"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-11",
@@ -783,7 +828,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/10abc72f03244e8ca6110c5a31ab5e12.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/72afa7c1c242adf7df65bc0ad0e3f4d3.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials",
+        "15% off on new range",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-12",
@@ -863,7 +913,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/aa2acd031fbbf599cf715467f55ac14f.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/77848e143bd4859466a148e1b79b5328.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-13",
@@ -941,7 +996,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/9870db7ab9b2cc95f9c9e0108465ef5d.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/7fd135300224d774c56331f27cb77903.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-14",
@@ -1010,7 +1069,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/113b2185e4f932c6eea7c0c35d162471.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/dba7cf2555aec2a2558db07dead546c8.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-15",
@@ -1050,7 +1114,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/0ae8634f75fb89114d304448801384a3.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/9464e10201674f3577ab38562618f376.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-16",
@@ -1095,7 +1163,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/9ce8803b6446b00c4d9cd51d0e003fa2.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/7ccb91e8ea26823aaddb68e927062b75.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-17",
@@ -1146,7 +1218,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/d4109f45ce98645ce0d7efb3351c06d4.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/297791ca2407b9d2a62282d1e601da0e.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-18",
@@ -1223,7 +1300,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/cb0306de3a73ea7271b1b2110f3f8e67.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/440c4f2de0612d257d3e003e6bf2b42d.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials",
+        "15% off on new range",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-19",
@@ -1299,7 +1381,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/51a58461c4878a20e4dc7580363a2d30.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/158171972d382e3fc3e047fe668e751e.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-20",
@@ -1347,7 +1434,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/69cbe8dc3abb0a6461fe1ca5fe366e1a.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/6b638e6497815a867b035dad42ec7ff0.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-21",
@@ -1388,7 +1480,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/ae6ae4e88eec43c9f7b575ba51a24cf3.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/a68a2f957c3ecfed30f2a3c83235338b.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-22",
@@ -1455,7 +1551,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/88543330f780da3dcd3d6898e00f09c8.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/320e0ae55b8cbd25120b7ba0f1bd0813.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-23",
@@ -1535,7 +1635,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/6e3b37b307c560fc33da121c7753b74a.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/8b5b5998dd866043bb1536592118db4f.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-24",
@@ -1613,7 +1717,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/ba2bb3c5e0b60ecfefaf06b621b0d7f9.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/8b5b5998dd866043bb1536592118db4f.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-25",
@@ -1656,7 +1764,10 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/5afd4e6d13ec93d0d49111e5f8418998.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/fc600341718b97767efed8cda8f582c4.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-26",
@@ -1691,7 +1802,10 @@
       "image_gallery": [
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/0a00149b8b2085e9bb605f806049b896.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-27",
@@ -1770,7 +1884,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/86f4ca49140f048bb104ed7c7229ee0f.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/2637563c4447351186e21aee4e29e60e.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials",
+        "5% off on new launches",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-28",
@@ -1849,7 +1968,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/9e22fbe709db11de03ff0125e2ab9984.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/b4ec3a8a2431434abf3e6651646770a6.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-29",
@@ -1918,7 +2042,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/76dc7615e0be61b25354b0f5b5b32a1d.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/2430b89bda18094f5b0f19d00be1e0c9.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-30",
@@ -1964,7 +2093,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/e8e4809cfe6af02a69a72ec4f8ed4f23.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/eb8ee0585d39b0d82fbcf1a571c98490.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-31",
@@ -2046,7 +2179,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/dd9cee4dccc97ee8867768c61de18ed9.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/df2546dc7c50d4bfb55b6dfec8dd7ef1.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "5% off on new launches",
+        "15% off on new range",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-32",
@@ -2128,7 +2266,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/be24f62039120c7f31c4f7607b4ba992.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/b4ec3a8a2431434abf3e6651646770a6.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-33",
@@ -2203,7 +2346,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/3284aac49df3defa5fc32fa6390b2796.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/251b2767df786853d88245b9bf9bcfe0.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-34",
@@ -2284,7 +2431,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/b4ec3a8a2431434abf3e6651646770a6.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/818005872bb47e9b6469d45e0f63f113.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-35",
@@ -2365,7 +2517,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/b4ec3a8a2431434abf3e6651646770a6.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/e952226740618e5c54e64f0539c29601.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-36",
@@ -2439,7 +2596,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/69c1c35746d99558651da80f69678dfb.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/e3d683975ab481e77d5c5b63f95cb617.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials",
+        "15% off on new range",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-37",
@@ -2503,7 +2665,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/36a1b4e79c85a0ba86f3daee9669d2c9.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/afe1c965c7cda7dc9ef03060fba9b7a3.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-38",
@@ -2569,7 +2735,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/a7fc51f0db7a1d91d27c76e2674922b0.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/033de47b39328d7209582dbf74e01029.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-39",
@@ -2630,7 +2800,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/9adf78ed600fa3d0470a93c12ca8d18c.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/ed230caec422606128b78bdf36802e64.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-40",
@@ -2692,7 +2867,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/723008dc4bf93faa1cc56cf9cd179b07.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/154e9d3e010457de6bf9fbde35481ac6.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-41",
@@ -2733,7 +2913,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/4e2b961e704e76ada265b827ebb5cbec.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/c5da18d400160d05d3040ffe9ebd11fc.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "5% off on new launches",
+        "15% off on new range",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-42",
@@ -2819,7 +3004,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/69bc81e41b924887b5d3f05718671a9b.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/6050a2c092b78a69f6905f3e4f5a8a1d.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-43",
@@ -2903,7 +3093,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/33cba40d9ad021d1ebfe8f3fe4014eb3.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/0e65f5c47a8780841fbcccab49046e46.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-44",
@@ -2956,7 +3150,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/51ceb498286d0e5546686e7a3eb96701.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/fe3b3eaa5fd22fa57214e8817bbb5de7.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-45",
@@ -2990,7 +3188,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/a20be40ab6a59f8c213364f1bb0dc3bb.jpeg",
         "https://www.shiseido.com/dw/image/v2/BBSK_PRD/on/demandware.static/-/Sites-itemmaster_shiseido/default/dw6d0411ad/images/hi-res/0729238141698_A1.jpg?sw=800&sh=800&sm=fit"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-46",
@@ -3023,7 +3225,10 @@
       "image_gallery": [
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/9fabb8a77d01795b306ac11746609f0d.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-47",
@@ -3058,7 +3263,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/c87ab2c0b097de2caec1dd66df05fab6.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/44a958d9a227dd54ec7cf6cf0f6af18a.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "10% off on skin essentials",
+        "15% off on new range",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-48",
@@ -3099,7 +3309,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/13381d6790a42b1e4f5fb947f9682f5d.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/98bfe02a5bdf350a90ae767196b4d8a8.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "10% off on skin essentials",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-49",
@@ -3141,7 +3355,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/1fdca0f4bf6d817b8b024850a4d4c209.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/d64410fe48474a953cfd25916ac43f13.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "15% off on new range",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-50",
@@ -3184,7 +3403,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/8e74144723cc9207f08a128a742d82af.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/dc6ecb8b955f1ba67357bc067f72beaf.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-51",
@@ -3229,7 +3452,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/8c0a18a5141dc77a15000e17a9b0222f.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/05a9d4061b47ae74771d01e906664f59.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-52",
@@ -3271,7 +3498,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/f974b710d20d7df6970bd8ba07f49381.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/15fac810322767cc3019748879b65c51.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-53",
@@ -3325,7 +3557,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/a57cae6ffec631acece5e2a5913f5124.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/bff5d2e74282e87a99cd20b4db8bc2d0.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-54",
@@ -3379,7 +3615,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/efe9cbfa72a5fb21be15d1208cf28311.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/48dd80b6345e854c1cc4761cef1f94ef.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-55",
@@ -3439,7 +3679,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/6256a2bad0f8cdcd8daee94d186772e9.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/c8db44adc45ae2ef65b7e7c2dfac3ef7.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-56",
@@ -3498,7 +3742,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/24ee616eb8513c089eded5350b7ad0cd.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/2aad956afe990d28ec64ad901af74e16.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-57",
@@ -3536,7 +3784,10 @@
       "image_gallery": [
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/f329a3fccbb20be8a2a0acc83278d9c5.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-58",
@@ -3594,7 +3845,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/186369d8eec8b9951052938ede48e864.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/065d96a996dfe07fdca91a369ea98398.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "10% off on skin essentials",
+        "5% off on new launches",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-59",
@@ -3651,7 +3907,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/611c379809dcc93a2b171ee4ab9f4374.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/c57f91e52af5fa3818e2f3f69afff7c4.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-60",
@@ -3734,7 +3995,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/ba5079b0bc6476541a48d4de6b72d673.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/8ee9f46162304d50292dd3fd0f19ef8e.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials",
+        "15% off on new range",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-61",
@@ -3808,7 +4074,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/1d1c8144ec23aeb02a1208d97420cf00.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/b529096ac1c2102b661c8ebe5f0726f5.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-62",
@@ -3912,7 +4183,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/8fa1403d3a7a7990cf721c7fcc96f4cc.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/454255c9a5085ad4cdac183ae1311aa8.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "15% off on new range",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-63",
@@ -4007,7 +4283,10 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/dc5fbf0f8ae230fee94ebfb8bdfdcced.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/72984185cce2dc79653c14aa785dfa19.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-64",
@@ -4031,7 +4310,10 @@
         "Moisturizers & Creams",
         "Eye & Lip Care"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-65",
@@ -4053,7 +4335,10 @@
       "categories": [
         "Serums & Treatments"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-66",
@@ -4076,7 +4361,10 @@
         "Serums & Treatments",
         "Refillable Skincare"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-67",
@@ -4128,7 +4416,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/c346b9229c2247dcd1f528f568b48ea5.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/f74f840ef63f8195ca8524e5934d6f6b.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-68",
@@ -4178,7 +4471,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/76f9f65cb8bbf85f2b2f38da6b1361a0.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/48806e123b80af0a1fd76a346a7c63a7.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-69",
@@ -4241,7 +4538,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/b0c8582d978518968269d83019489a78.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/9b2c53c6f6a997eb60a5eb62a9f9ead4.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-70",
@@ -4304,7 +4606,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/bb823536ab28538f3d371c4236a76c91.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/70c248e695c8129f5358b59cb3a8cec9.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "10% off on skin essentials",
+        "15% off on new range",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-71",
@@ -4377,7 +4684,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/48faccbf3de18a5d8e32f4164196fb9d.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/c963acce48bfaf7273fb259c7d3cd83c.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-72",
@@ -4448,7 +4760,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/92b34fef7db4df962fe4955f16462a14.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/a67ab74172bc8b8e7e9ef75c60589aa1.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-73",
@@ -4524,7 +4840,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/9433dd2c04fc473d4a4e990f0d52a7b0.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/f5a55ad1729a4ec006d241f178f0d37d.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-74",
@@ -4606,7 +4927,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/02241d921a4f0bf19f4642e15bab917c.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/1c45f0d704b26006beb7b5eba941f37a.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-75",
@@ -4686,7 +5012,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/bba80c3e8b2d51639a189398aed09572.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/6d0e81d5081ee162a5f38cc7ce9bfdb4.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "5% off on new launches",
+        "15% off on new range",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-76",
@@ -4763,7 +5094,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/bba80c3e8b2d51639a189398aed09572.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/6d0e81d5081ee162a5f38cc7ce9bfdb4.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials",
+        "15% off on new range",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-77",
@@ -4827,7 +5163,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/e4485ac2cf41ef68d32995ce52030078.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/22ff9de59ca0da05b5c29b1e72bce3ae.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "15% off on new range",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-78",
@@ -4891,7 +5232,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/e4485ac2cf41ef68d32995ce52030078.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/22ff9de59ca0da05b5c29b1e72bce3ae.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches",
+        "10% off on skin essentials"
+      ]
     },
     {
       "id": "shiseido-79",
@@ -4967,7 +5313,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/68dcf9d6b6ccd69907685b20beb6e906.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/901765afd40365f5bd81a92cb1fd540d.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "10% off on skin essentials",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-80",
@@ -5037,7 +5387,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/b23f2411538fccfcd49bfcdbeed0f864.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/c1c2d312933db109eb0861200eb05a89.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials",
+        "15% off on new range"
+      ]
     },
     {
       "id": "shiseido-81",
@@ -5107,7 +5462,11 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/3e8edc823e04de17cac9bfd079403010.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/ab17584034b823e7d604d35da2147b51.jpeg"
       ],
-      "coupon_applicable": "SAVE15"
+      "coupon_applicable": "SAVE15",
+      "promotions": [
+        "15% off on new range",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-82",
@@ -5158,7 +5517,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/dfa0a7459fbe5f0d1f729ef10811463d.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/b61f0e94fdbf1dc3bd58b2faf77ee9e1.jpeg"
       ],
-      "coupon_applicable": "SAVE20"
+      "coupon_applicable": "SAVE20",
+      "promotions": [
+        "15% off on new range",
+        "10% off on skin essentials",
+        "5% off on new launches"
+      ]
     },
     {
       "id": "shiseido-83",
@@ -5232,7 +5596,12 @@
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/e286202ecf5f4d071f3d4f681a0e1bee.jpeg",
         "Skincare _ SHISEIDO_Images/02-04 170951/URL/a841d28ecd3b98e6d3cd24c651fa1437.jpeg"
       ],
-      "coupon_applicable": "SAVE10"
+      "coupon_applicable": "SAVE10",
+      "promotions": [
+        "5% off on new launches",
+        "10% off on skin essentials",
+        "15% off on new range"
+      ]
     }
   ]
 }

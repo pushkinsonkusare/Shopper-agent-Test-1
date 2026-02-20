@@ -194,6 +194,10 @@ function buildCartItem(product, options = {}, fallbackIndex = 0) {
         ? formatCartColor(options.color)
         : null;
   const couponApplicable = (product.coupon_applicable || "").toString().trim();
+  const allPromotions = product.promotions && Array.isArray(product.promotions)
+    ? product.promotions.filter((p) => p && String(p).trim())
+    : [];
+  const promotions = allPromotions.slice(0, 1);
   return {
     id: product.id ?? getProductKey(product, fallbackIndex),
     name: product.name || "Item",
@@ -205,6 +209,7 @@ function buildCartItem(product, options = {}, fallbackIndex = 0) {
     fit: options.fit || null,
     imageUrl: getPlpPrimaryImage(product, fallbackIndex),
     couponApplicable: couponApplicable ? normalizeCouponCode(couponApplicable) : "",
+    promotions,
   };
 }
 
@@ -264,27 +269,60 @@ function getCartLevelDiscountRate(appliedCartCoupons = []) {
   return orderRate;
 }
 
+/** Cart-level promotion: 10% off subtotal only (single generic promotion). */
+const CART_PROMOTION_LABEL = "10% off with summersale";
+const CART_PROMOTION_RATE = 0.1;
+
+/** Promotion label -> discount rate (item-level, auto-applied). */
+const PROMOTION_RATES = {
+  "10% off on skin essentials": 0.1,
+  "15% off on new range": 0.15,
+  "5% off on new launches": 0.05,
+};
+
+/** Item-level discount rate from auto-applied promotions only. */
+function getItemPromotionRate(item) {
+  const list = item.promotions && Array.isArray(item.promotions) ? item.promotions : [];
+  let rate = 0;
+  for (const label of list) {
+    const r = PROMOTION_RATES[String(label).trim()];
+    if (typeof r === "number") rate += r;
+  }
+  return Math.min(1, rate);
+}
+
 function calculateCartTotals(items, appliedItemCoupons = {}, appliedCartCoupons = []) {
   const itemCount = items.reduce((sum, item) => sum + item.qty, 0);
   const subtotalAfterItemDiscount = roundCurrency(
     items.reduce((sum, item) => {
       const lineRaw = item.price * item.qty;
-      const itemRate = getItemLevelDiscountRate(item.id, appliedItemCoupons);
+      const couponRate = getItemLevelDiscountRate(item.id, appliedItemCoupons);
+      const promotionRate = getItemPromotionRate(item);
+      const itemRate = Math.min(1, couponRate + promotionRate);
       return sum + roundCurrency(lineRaw * (1 - itemRate));
     }, 0)
   );
   const orderRate = getCartLevelDiscountRate(appliedCartCoupons);
   const orderDiscount = roundCurrency(subtotalAfterItemDiscount * orderRate);
+  const cartPromotion = roundCurrency(subtotalAfterItemDiscount * CART_PROMOTION_RATE);
   const shipping = items.length ? 60 : 0;
   const shippingDiscount = orderRate ? shipping : 0;
-  const taxableAmount = Math.max(0, subtotalAfterItemDiscount - orderDiscount);
+  const taxableAmount = Math.max(
+    0,
+    subtotalAfterItemDiscount - orderDiscount - cartPromotion
+  );
   const taxes = roundCurrency(taxableAmount * 0.05);
   const total = roundCurrency(
-    subtotalAfterItemDiscount - orderDiscount + shipping - shippingDiscount + taxes
+    subtotalAfterItemDiscount -
+      orderDiscount -
+      cartPromotion +
+      shipping -
+      shippingDiscount +
+      taxes
   );
   return {
     subtotal: subtotalAfterItemDiscount,
-    promotions: 0,
+    promotions: cartPromotion,
     orderDiscount,
     shipping,
     shippingDiscount,
@@ -368,7 +406,9 @@ function createOrderSummaryBubble({
   const fallbackImages = ["Bag1.png", "Bag2.png", "Bag3.png", "Bag4.png"];
 
   items.forEach((item, index) => {
-    const itemRate = getItemLevelDiscountRate(item.id, appliedItemCoupons);
+    const couponRate = getItemLevelDiscountRate(item.id, appliedItemCoupons);
+    const promotionRate = getItemPromotionRate(item);
+    const itemRate = Math.min(1, couponRate + promotionRate);
     const shouldShowDiscount = itemRate > 0;
 
     const itemRow = document.createElement("div");
@@ -401,8 +441,14 @@ function createOrderSummaryBubble({
     const meta = document.createElement("div");
     meta.className = "cart-item-meta";
     meta.innerHTML = `
-      <div>Size ${item.size}</div>
-      <div>Qty ${item.qty}</div>
+      <div class="cart-item-meta-group">
+        <div class="cart-item-meta-label">Size</div>
+        <div class="cart-item-meta-value">${item.size}</div>
+      </div>
+      <div class="cart-item-meta-qty-group">
+        <div class="cart-item-meta-qty-label">Qty</div>
+        <div class="cart-item-meta-qty-value">${item.qty}</div>
+      </div>
     `;
     detailsInner.append(name, meta);
 
@@ -451,9 +497,9 @@ function createOrderSummaryBubble({
 
   const promotionsRow = document.createElement("div");
   promotionsRow.className = "order-summary-total-row";
-  promotionsRow.innerHTML = `<span>Promotions</span><span>${
-    totalsData.shippingDiscount
-      ? `-${formatCurrency(totalsData.shippingDiscount)}`
+  promotionsRow.innerHTML = `<span>Promotions</span><span title="${CART_PROMOTION_LABEL}">${
+    totalsData.promotions
+      ? `-${formatCurrency(totalsData.promotions)}`
       : "-"
   }</span>`;
 
@@ -1129,9 +1175,12 @@ function createCartBubble(state, addedItem, options = {}) {
   const appliedCartCoupons = state.appliedCartCoupons || [];
 
   state.items.forEach((item, index) => {
-    const itemRate = getItemLevelDiscountRate(item.id, appliedItemCoupons);
-    const shouldShowItemDiscount = itemRate > 0;
+    const couponRate = getItemLevelDiscountRate(item.id, appliedItemCoupons);
+    const promotionRate = getItemPromotionRate(item);
+    const totalItemRate = Math.min(1, couponRate + promotionRate);
+    const shouldShowItemDiscount = totalItemRate > 0;
     const itemCodes = appliedItemCoupons[item.id] || [];
+    const itemPromotions = (item.promotions && Array.isArray(item.promotions) ? item.promotions : []).slice(0, 2);
 
     const itemRow = document.createElement("div");
     itemRow.className = "cart-item";
@@ -1160,13 +1209,41 @@ function createCartBubble(state, addedItem, options = {}) {
     const name = document.createElement("div");
     name.className = "cart-item-name";
     name.textContent = item.name;
-    const meta = document.createElement("div");
-    meta.className = "cart-item-meta";
-    meta.innerHTML = `
-      <div>Size ${item.size}</div>
-      <div>Qty ${item.qty}</div>
+    const metaTop = document.createElement("div");
+    metaTop.className = "cart-item-meta";
+    const metaParts = [];
+    if (item.color) metaParts.push(`<div class="cart-item-meta-group"><div class="cart-item-meta-label">Color</div><div class="cart-item-meta-value">${item.color}</div></div>`);
+    metaParts.push(`<div class="cart-item-meta-group"><div class="cart-item-meta-label">Size</div><div class="cart-item-meta-value">${item.size}</div></div>`);
+    metaTop.innerHTML = metaParts.join("");
+    details.append(name, metaTop);
+
+    if (itemPromotions.length > 0) {
+      const promotionsRow = document.createElement("div");
+      promotionsRow.className = "cart-item-promotions";
+      const promotionsLabel = document.createElement("span");
+      promotionsLabel.className = "cart-item-promotions-label";
+      promotionsLabel.textContent = "Promotions";
+      const pillsWrap = document.createElement("span");
+      pillsWrap.className = "cart-item-promotion-pills";
+      itemPromotions.forEach((label) => {
+        const pill = document.createElement("span");
+        pill.className = "cart-item-promotion-pill";
+        pill.textContent = String(label).trim();
+        pillsWrap.append(pill);
+      });
+      promotionsRow.append(promotionsLabel, pillsWrap);
+      details.append(promotionsRow);
+    }
+
+    const metaQty = document.createElement("div");
+    metaQty.className = "cart-item-meta cart-item-meta--qty";
+    metaQty.innerHTML = `
+      <div class="cart-item-meta-qty-group">
+        <div class="cart-item-meta-qty-label">Qty</div>
+        <div class="cart-item-meta-qty-value">${item.qty}</div>
+      </div>
     `;
-    details.append(name, meta);
+    details.append(metaQty);
 
     if (itemCodes.length > 0) {
       const itemPills = document.createElement("div");
@@ -1222,7 +1299,7 @@ function createCartBubble(state, addedItem, options = {}) {
     const sale = document.createElement("div");
     sale.className = "cart-item-sale";
     const lineTotal = item.price * item.qty;
-    const discountedTotal = roundCurrency(lineTotal * (1 - itemRate));
+    const discountedTotal = roundCurrency(lineTotal * (1 - totalItemRate));
     sale.textContent = formatCurrency(discountedTotal);
     price.append(sale);
 
@@ -1236,6 +1313,10 @@ function createCartBubble(state, addedItem, options = {}) {
   const subtotalRow = document.createElement("div");
   subtotalRow.className = "cart-total-row";
   subtotalRow.innerHTML = `<span>Subtotal</span><span class="cart-total-value"></span>`;
+
+  const promotionsRow = document.createElement("div");
+  promotionsRow.className = "cart-total-row";
+  promotionsRow.innerHTML = `<span><span class="cart-total-label">Promotions</span><span class="cart-promotion-name"></span></span><span class="cart-total-value cart-total-promotions"></span>`;
 
   const couponDiscountRow = document.createElement("div");
   couponDiscountRow.className = "cart-total-row";
@@ -1259,6 +1340,7 @@ function createCartBubble(state, addedItem, options = {}) {
 
   totals.append(
     subtotalRow,
+    promotionsRow,
     couponDiscountRow,
     shippingRow,
     shippingDiscountRow,
@@ -1350,6 +1432,23 @@ function createCartBubble(state, addedItem, options = {}) {
     subtotalRow.querySelector(".cart-total-value").textContent = formatCurrency(
       totalsData.subtotal
     );
+    const promoSpan = promotionsRow.querySelector(".cart-total-promotions");
+    const promoNameEl = promotionsRow.querySelector(".cart-promotion-name");
+    if (totalsData.promotions > 0) {
+      promoSpan.textContent = `-${formatCurrency(totalsData.promotions)}`;
+      promoSpan.title = CART_PROMOTION_LABEL;
+      if (promoNameEl) {
+        promoNameEl.textContent = CART_PROMOTION_LABEL;
+        promoNameEl.className = "cart-promotion-name cart-promotion-name--visible";
+      }
+    } else {
+      promoSpan.textContent = "-";
+      promoSpan.title = "";
+      if (promoNameEl) {
+        promoNameEl.textContent = "";
+        promoNameEl.className = "cart-promotion-name";
+      }
+    }
     couponDiscountRow.querySelector(".cart-total-value").textContent =
       totalsData.orderDiscount
         ? `-${formatCurrency(totalsData.orderDiscount)}`

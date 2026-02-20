@@ -347,6 +347,7 @@ def main():
             reviews = parse_review_count(row.get("Reviews"))
             variants = parse_variants(row.get("variants"))
             coupon_applicable = normalize_inline(row.get("Coupon_Applicable", "")).strip().upper() or None
+            promotion = normalize_inline(row.get("Promotions", "")).strip() or None
 
             key = name_url or name
             if not key:
@@ -384,6 +385,7 @@ def main():
                     "image_gallery": [],
                     "tags": [],
                     "coupon_applicable": coupon_applicable,
+                    "promotions": [promotion] if promotion else [],
                 }
                 products_by_key[key] = product
             else:
@@ -401,6 +403,10 @@ def main():
                     product["results_timeline"] = results_timeline
                 if coupon_applicable and not product.get("coupon_applicable"):
                     product["coupon_applicable"] = coupon_applicable
+                if promotion:
+                    promos = product.setdefault("promotions", [])
+                    if promotion not in promos:
+                        promos.append(promotion)
 
             image_path = None
             saved_to = normalize_inline(row.get("URL_Saved_To"))
