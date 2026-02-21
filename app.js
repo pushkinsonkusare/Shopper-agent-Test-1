@@ -4227,6 +4227,58 @@ function createPdpBubble(product) {
     updateCarousel();
   });
 
+  if (images.length > 1) {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let preventScroll = false;
+    const swipeThreshold = 50;
+    const moveThreshold = 8;
+    imageFrame.addEventListener(
+      "touchstart",
+      (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        preventScroll = false;
+      },
+      { passive: true }
+    );
+    imageFrame.addEventListener(
+      "touchmove",
+      (e) => {
+        if (preventScroll) {
+          e.preventDefault();
+          return;
+        }
+        const x = e.touches[0].clientX;
+        const y = e.touches[0].clientY;
+        const dx = Math.abs(x - touchStartX);
+        const dy = Math.abs(y - touchStartY);
+        if (dx > moveThreshold || dy > moveThreshold) {
+          if (dx > dy) {
+            preventScroll = true;
+            e.preventDefault();
+          }
+        }
+      },
+      { passive: false }
+    );
+    imageFrame.addEventListener(
+      "touchend",
+      (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const deltaX = touchStartX - touchEndX;
+        if (deltaX > swipeThreshold) {
+          currentIndex = (currentIndex + 1) % images.length;
+          updateCarousel();
+        } else if (deltaX < -swipeThreshold) {
+          currentIndex = (currentIndex - 1 + images.length) % images.length;
+          updateCarousel();
+        }
+      },
+      { passive: true }
+    );
+  }
+
   carousel.append(leftArrow, imageFrame, rightArrow, dots);
 
   const body = document.createElement("div");
