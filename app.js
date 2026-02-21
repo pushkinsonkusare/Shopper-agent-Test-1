@@ -1219,7 +1219,8 @@ function createCartBubble(state, addedItem, options = {}) {
     firstInactive != null
       ? `Oh Snap!. Coupon '${formatCouponPillLabel(firstInactive)}' has been added but does not apply to any items in your cart. It will auto apply when eligible.`
       : "";
-  inactiveAlert.hidden = inactiveCoupons.length === 0;
+  const headerIsOhSnap = options.headerText && String(options.headerText).startsWith("Oh Snap");
+  inactiveAlert.hidden = inactiveCoupons.length === 0 || headerIsOhSnap;
 
   const summaryRow = document.createElement("div");
   summaryRow.className = "cart-summary-row";
@@ -1662,7 +1663,6 @@ function createCartBubble(state, addedItem, options = {}) {
         if (!orderCouponQualifies(normalized, state.items || [], state.appliedItemCoupons || {})) {
           state.inactiveCoupons = state.inactiveCoupons || [];
           if (!state.inactiveCoupons.includes(normalized)) state.inactiveCoupons.push(normalized);
-          addBubble("assistant", inactiveMessage);
           couponInput.value = "";
           updateCouponRowState();
           const cartBubble = createCartBubble(state, null, { headerText: inactiveMessage });
@@ -1686,7 +1686,6 @@ function createCartBubble(state, addedItem, options = {}) {
         if (eligibleItemIds.length === 0) {
           state.inactiveCoupons = state.inactiveCoupons || [];
           if (!state.inactiveCoupons.includes(normalized)) state.inactiveCoupons.push(normalized);
-          addBubble("assistant", inactiveMessage);
           couponInput.value = "";
           updateCouponRowState();
           const cartBubble = createCartBubble(state, null, { headerText: inactiveMessage });
