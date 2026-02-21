@@ -3051,8 +3051,8 @@ function addIntroSection() {
     <button class="chip chip-wide" data-prompt="Shop by skin concern">
       Shop by skin concern
     </button>
-    <button class="chip chip-wide" data-prompt="Find a dewy foundation for me">
-      Find a dewy foundation for me
+    <button class="chip chip-wide" data-prompt="Find your ideal eyecare">
+      Find your ideal eyecare
     </button>
     <button class="chip chip-wide" data-prompt="Best SPF for sensitive skin">
       Best SPF for sensitive skin
