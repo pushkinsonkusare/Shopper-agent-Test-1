@@ -15,6 +15,13 @@ const RETURN_POLICY_FOLLOWUPS = {
 
 const chatEl = document.getElementById("chat");
 const searchInput = document.getElementById("searchInput");
+
+/** Trigger haptic feedback when supported (e.g. mobile). No-op on desktop. */
+function triggerHaptic() {
+  if (typeof navigator !== "undefined" && navigator.vibrate) {
+    navigator.vibrate(10);
+  }
+}
 const searchButton = document.getElementById("searchButton");
 const scrollToBottomBtn = document.getElementById("scrollToBottom");
 
@@ -65,6 +72,13 @@ const fallbackPalette = [
   "#e8f7f1",
   "#fde0d9",
 ];
+
+/** Light haptic feedback on supported devices (e.g. mobile). No-op when Vibration API is unavailable. */
+function triggerHaptic() {
+  if (typeof navigator !== "undefined" && navigator.vibrate) {
+    navigator.vibrate(10);
+  }
+}
 
 function formatPrice(value) {
   return `$${value.toFixed(0)}`;
@@ -4920,6 +4934,10 @@ function handleSearch() {
 }
 
 function setupEvents() {
+  chatEl.addEventListener("click", (event) => {
+    const button = event.target.closest("button, [role='button']");
+    if (button) triggerHaptic();
+  });
   searchButton.addEventListener("click", handleSearch);
   searchInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") handleSearch();
