@@ -16,10 +16,33 @@ const RETURN_POLICY_FOLLOWUPS = {
 const chatEl = document.getElementById("chat");
 const searchInput = document.getElementById("searchInput");
 
-/** Trigger haptic feedback when supported (e.g. mobile). No-op on desktop. */
+/** Lazy-created hidden switch used for iOS Safari haptic (iOS 18+). */
+let iosHapticLabel = null;
+
+/** Trigger haptic feedback when supported. Uses Vibration API on Android; on iOS Safari (18+) uses a hidden switch click. */
 function triggerHaptic() {
-  if (typeof navigator !== "undefined" && navigator.vibrate) {
+  if (typeof navigator === "undefined") return;
+  if (navigator.vibrate) {
     navigator.vibrate(10);
+    return;
+  }
+  const isLikelyIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  if (isLikelyIOS && document.body) {
+    if (!iosHapticLabel) {
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.setAttribute("switch", "");
+      input.id = "ios-haptic-switch";
+      input.setAttribute("aria-hidden", "true");
+      input.style.cssText = "position:fixed;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;";
+      iosHapticLabel = document.createElement("label");
+      iosHapticLabel.htmlFor = "ios-haptic-switch";
+      iosHapticLabel.setAttribute("aria-hidden", "true");
+      iosHapticLabel.style.cssText = "position:fixed;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;";
+      iosHapticLabel.appendChild(input);
+      document.body.appendChild(iosHapticLabel);
+    }
+    iosHapticLabel.click();
   }
 }
 const searchButton = document.getElementById("searchButton");
