@@ -16,32 +16,40 @@ const RETURN_POLICY_FOLLOWUPS = {
 const chatEl = document.getElementById("chat");
 const searchInput = document.getElementById("searchInput");
 
-/** True when device has coarse pointer (touch); used to try iOS switch haptic. */
-const supportsTouchHaptics =
-  typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+/** Lazy-created AudioContext for click sound (iOS Safari has no Vibration API and no programmatic haptic). */
+let clickAudioContext = null;
 
-/** Trigger haptic feedback when supported. Uses Vibration API on Android; on iOS Safari (18+) uses a one-off hidden switch click (same approach as ios-haptics). */
+/** Play a short tick sound. Works on all platforms including iOS Safari. Must be called from a user gesture. */
+function playClickSound() {
+  if (typeof window === "undefined" || !window.AudioContext) return;
+  try {
+    if (!clickAudioContext) clickAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = clickAudioContext;
+    if (ctx.state === "suspended") ctx.resume();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = 600;
+    osc.type = "sine";
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.04);
+  } catch (_) {}
+}
+
+/**
+ * Trigger feedback on button tap: vibration on Android, short tick sound on iOS/desktop (iOS Safari does not support
+ * programmatic haptic—only direct touch on a native switch triggers it).
+ */
 function triggerHaptic() {
   if (typeof navigator === "undefined") return;
   if (navigator.vibrate) {
     navigator.vibrate(10);
     return;
   }
-  if (!supportsTouchHaptics || !document.head) return;
-  try {
-    const labelEl = document.createElement("label");
-    labelEl.setAttribute("aria-hidden", "true");
-    labelEl.style.display = "none";
-    const inputEl = document.createElement("input");
-    inputEl.type = "checkbox";
-    inputEl.setAttribute("switch", "");
-    labelEl.appendChild(inputEl);
-    document.head.appendChild(labelEl);
-    labelEl.click();
-    document.head.removeChild(labelEl);
-  } catch (_) {
-    // ignore
-  }
+  playClickSound();
 }
 const searchButton = document.getElementById("searchButton");
 const scrollToBottomBtn = document.getElementById("scrollToBottom");
