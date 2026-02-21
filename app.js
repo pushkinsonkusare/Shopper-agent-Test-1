@@ -1205,22 +1205,29 @@ function createCartBubble(state, addedItem, options = {}) {
 
   const header = document.createElement("div");
   header.className = "cart-header";
-  header.textContent = options.headerText || buildAddToCartMessage(addedItem);
 
   const divider = document.createElement("div");
   divider.className = "cart-divider";
 
   reconcileInactiveCoupons(state);
   const inactiveCoupons = state.inactiveCoupons || [];
-  const inactiveAlert = document.createElement("div");
-  inactiveAlert.className = "cart-inactive-coupon-alert";
   const firstInactive = inactiveCoupons.length > 0 ? inactiveCoupons[0] : null;
-  inactiveAlert.textContent =
+  const ohSnapMessage =
     firstInactive != null
       ? `Oh Snap!. Coupon '${formatCouponPillLabel(firstInactive)}' has been added but does not apply to any items in your cart. It will auto apply when eligible.`
-      : "";
-  const headerIsOhSnap = options.headerText && String(options.headerText).startsWith("Oh Snap");
-  inactiveAlert.hidden = inactiveCoupons.length === 0 || headerIsOhSnap;
+      : null;
+  if (options.headerText) {
+    header.textContent = options.headerText;
+  } else if (ohSnapMessage) {
+    header.textContent = ohSnapMessage;
+  } else {
+    header.textContent = buildAddToCartMessage(addedItem);
+  }
+
+  const inactiveAlert = document.createElement("div");
+  inactiveAlert.className = "cart-inactive-coupon-alert";
+  inactiveAlert.textContent = ohSnapMessage || "";
+  inactiveAlert.hidden = true;
 
   const summaryRow = document.createElement("div");
   summaryRow.className = "cart-summary-row";
@@ -1570,8 +1577,14 @@ function createCartBubble(state, addedItem, options = {}) {
       pill.append(label, closeIcon);
       couponPills.append(pill);
     });
+    const displayTotal = roundCurrency(
+      totalsData.subtotal -
+        totalsData.orderDiscount -
+        totalsData.promotions +
+        totalsData.taxes
+    );
     summaryCount.textContent = `${totalsData.itemCount} items`;
-    summaryTotal.textContent = formatCurrency(totalsData.total);
+    summaryTotal.textContent = formatCurrency(displayTotal);
     subtotalRow.querySelector(".cart-total-value").textContent = formatCurrency(
       totalsData.subtotal
     );
@@ -1601,9 +1614,8 @@ function createCartBubble(state, addedItem, options = {}) {
     taxesRow.querySelector(".cart-total-value").textContent = formatCurrency(
       totalsData.taxes
     );
-    totalRow.querySelector(".cart-total-value").textContent = formatCurrency(
-      totalsData.total
-    );
+    totalRow.querySelector(".cart-total-value").textContent =
+      formatCurrency(displayTotal);
   };
 
   const updateCouponRowState = () => {
