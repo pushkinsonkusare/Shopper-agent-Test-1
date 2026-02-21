@@ -302,6 +302,11 @@ img {
   caret-color: #111;
 }
 
+.input-wrapper input:focus {
+  outline: none;
+  border-color: #111111;
+}
+
 .input-wrapper button {
   position: absolute;
   right: 10px;
