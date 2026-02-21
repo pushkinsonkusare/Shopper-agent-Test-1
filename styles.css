@@ -296,7 +296,7 @@ img {
   border: 2px solid #cfd4dc;
   border-radius: 14px;
   padding: 14px 48px 14px 14px;
-  font-size: 14px;
+  font-size: 16px; /* 16px minimum prevents iOS zoom on input focus */
   background: #fff;
   color: #111;
   caret-color: #111;
