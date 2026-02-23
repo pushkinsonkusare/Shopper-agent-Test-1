@@ -2828,3 +2828,174 @@ body.modal-open {
   font-weight: 700;
   color: #0f172a;
 }
+
+/* Bottom sheet (skin concerns / quiz) */
+.bottom-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: bottom-sheet-backdrop-in 0.25s ease;
+}
+
+@keyframes bottom-sheet-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.bottom-sheet {
+  width: 100%;
+  max-width: 420px;
+  max-height: 85vh;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  padding: 0 16px 24px;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
+  animation: bottom-sheet-slide-in 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes bottom-sheet-slide-in {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.bottom-sheet-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: #d0d4d9;
+  margin: 10px auto 8px;
+  flex-shrink: 0;
+}
+
+.bottom-sheet-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  line-height: 1;
+  color: #555;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.bottom-sheet-close:hover {
+  background: #f0f0f0;
+  color: #111;
+}
+
+.bottom-sheet-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 16px;
+  padding-right: 40px;
+}
+
+.bottom-sheet-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.bottom-sheet-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 2px solid #cfd4dc;
+  border-radius: 12px;
+  background: #fff;
+  color: #111;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  text-align: left;
+}
+
+.bottom-sheet-option:hover {
+  border-color: #b0b6be;
+}
+
+.bottom-sheet-option.selected {
+  border-color: #111111;
+  background: #f5f5f5;
+}
+
+.bottom-sheet-option .option-text {
+  flex: 1;
+}
+
+.bottom-sheet-option .option-radio {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #cfd4dc;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bottom-sheet-option.selected .option-radio {
+  border-color: #111111;
+  background: #111111;
+  box-shadow: inset 0 0 0 3px #fff;
+}
+
+.bottom-sheet-actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+
+.bottom-sheet-actions .bottom-sheet-btn {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid #cfd4dc;
+  background: #fff;
+  color: #111;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.bottom-sheet-actions .bottom-sheet-btn:hover:not(:disabled) {
+  border-color: #111111;
+  background: #f5f5f5;
+}
+
+.bottom-sheet-actions .bottom-sheet-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bottom-sheet-actions .bottom-sheet-btn.primary {
+  border-color: #111111;
+  background: #111111;
+  color: #fff;
+}
+
+.bottom-sheet-actions .bottom-sheet-btn.primary:hover:not(:disabled) {
+  background: #333;
+  border-color: #333;
+}

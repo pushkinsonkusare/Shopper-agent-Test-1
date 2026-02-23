@@ -3082,6 +3082,10 @@ function addIntroSection() {
       );
       return;
     }
+    if (prompt === "Find your ideal eyecare") {
+      openSkinConcernsBottomSheet();
+      return;
+    }
     searchInput.value = prompt;
     handleSearch();
   });
@@ -3358,6 +3362,128 @@ function addRoombaLevelQuestion(selections) {
   trigger.addEventListener("click", () => {
     openRoombaLevelSheet();
   });
+}
+
+function openSkinConcernsBottomSheet() {
+  const overlay = document.createElement("div");
+  overlay.className = "bottom-sheet-overlay";
+
+  const sheet = document.createElement("div");
+  sheet.className = "bottom-sheet";
+
+  const handle = document.createElement("div");
+  handle.className = "bottom-sheet-handle";
+
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.className = "bottom-sheet-close";
+  closeBtn.setAttribute("aria-label", "Close");
+  closeBtn.textContent = "×";
+
+  const title = document.createElement("div");
+  title.className = "bottom-sheet-title";
+  title.textContent = "Tell us your skin concerns";
+
+  const list = document.createElement("div");
+  list.className = "bottom-sheet-list";
+  const options = [
+    "Dark circles",
+    "Puffiness",
+    "Fine lines & wrinkles",
+    "Dryness",
+    "Dullness",
+    "Dark spots",
+    "Firming & elasticity",
+  ];
+  options.forEach((label) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "bottom-sheet-option";
+    item.innerHTML = `
+      <span class="option-text">${label}</span>
+      <span class="option-radio"></span>
+    `;
+    list.append(item);
+  });
+
+  const actions = document.createElement("div");
+  actions.className = "bottom-sheet-actions";
+
+  const clearBtn = document.createElement("button");
+  clearBtn.type = "button";
+  clearBtn.className = "bottom-sheet-btn";
+  clearBtn.textContent = "Clear";
+  clearBtn.disabled = true;
+
+  const proceedBtn = document.createElement("button");
+  proceedBtn.type = "button";
+  proceedBtn.className = "bottom-sheet-btn primary";
+  proceedBtn.textContent = "Proceed";
+  proceedBtn.disabled = true;
+
+  actions.append(clearBtn, proceedBtn);
+  sheet.append(handle, closeBtn, title, list, actions);
+  overlay.append(sheet);
+  document.body.append(overlay);
+
+  const updateState = () => {
+    const selected = list.querySelectorAll(".bottom-sheet-option.selected");
+    const hasSelection = selected.length > 0;
+    clearBtn.disabled = !hasSelection;
+    proceedBtn.disabled = !hasSelection;
+  };
+
+  list.addEventListener("click", (event) => {
+    const item = event.target.closest(".bottom-sheet-option");
+    if (!item) return;
+    item.classList.toggle("selected");
+    updateState();
+  });
+
+  clearBtn.addEventListener("click", () => {
+    list.querySelectorAll(".bottom-sheet-option").forEach((btn) => {
+      btn.classList.remove("selected");
+    });
+    updateState();
+  });
+
+  proceedBtn.addEventListener("click", () => {
+    const selected = list.querySelectorAll(".bottom-sheet-option.selected");
+    if (!selected.length) return;
+    const labels = [...selected].map((el) =>
+      el.querySelector(".option-text").textContent.trim()
+    );
+    overlay.remove();
+    addBubble("user", "Skin concerns: " + labels.join(", "));
+    runWithLatency(
+      () => {
+        addBubble(
+          "assistant",
+          "Thanks. We'll use that to find your ideal eye care. (Next: age, sensitivity, texture.)"
+        );
+        scrollChatElementIntoView(chatEl.lastElementChild);
+        updateScrollButton();
+      },
+      LATENCY_MS,
+      "Finding recommendations..."
+    );
+  });
+
+  const onKey = (e) => {
+    if (e.key === "Escape") closeSheet();
+  };
+  const closeSheet = () => {
+    overlay.remove();
+    document.removeEventListener("keydown", onKey);
+  };
+
+  closeBtn.addEventListener("click", closeSheet);
+
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) closeSheet();
+  });
+
+  document.addEventListener("keydown", onKey);
 }
 
 function openRoombaLevelSheet() {
