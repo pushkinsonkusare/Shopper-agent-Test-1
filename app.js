@@ -2232,27 +2232,6 @@ function createDetailedComparisonBubble(products) {
     table.append(comparisonRow);
   });
 
-  const summaryRow = document.createElement("div");
-  summaryRow.className = "comparison-row comparison-summary-row";
-  const summaryLabel = document.createElement("div");
-  summaryLabel.className = "comparison-cell comparison-label";
-  summaryLabel.textContent = "Summary";
-  const summaryCells = comparisonProducts.map((product) => {
-    const cell = document.createElement("div");
-    cell.className = "comparison-cell comparison-summary-cell";
-    const summaryText =
-      product.overview_summary ||
-      product.description ||
-      product.summary ||
-      product.compare_attributes?.description ||
-      product.compare_attributes?.summary ||
-      "—";
-    cell.textContent = cleanKeyBenefitsFromSummary(summaryText);
-    return cell;
-  });
-  summaryRow.append(summaryLabel, ...summaryCells);
-  table.append(summaryRow);
-
   const buildViewCell = (product) => {
     const cell = document.createElement("div");
     cell.className = "comparison-cell comparison-cta-cell";
