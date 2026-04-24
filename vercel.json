@@ -2,20 +2,26 @@
   "version": 2,
   "functions": {
     "api/[...path].js": {
-      "includeFiles": "shiseido-catalog.json"
+      "includeFiles": [
+        "index.html",
+        "app.js",
+        "site-config.js",
+        "styles.css",
+        "shiseido-catalog.json",
+        "Shiseido_Banner.png",
+        "Latency_loader.png",
+        "Close.png"
+      ]
     }
   },
   "routes": [
-    {
-      "handle": "filesystem"
-    },
     {
       "src": "/api/(.*)",
       "dest": "/api/[...path].js"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/api/[...path].js"
     }
   ]
 }
