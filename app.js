@@ -4871,53 +4871,282 @@ function isToolProduct(product) {
   return /tool|brush|sponge|roller|device/.test(`${category} ${type}`);
 }
 
-function buildPdpFaqActions(product) {
-  const ingredientAction = { key: "ingredients", label: "What are the ingredients?" };
-  if (isSkincareProduct(product)) {
-    return [
-      { key: "cancellation-policy", label: "What is the cancellation policy?" },
-      { key: "fragrance-free", label: "Is this fragrance-free?" },
-      ingredientAction,
-    ];
+function getPdpSignalText(product) {
+  return [
+    product?.name,
+    product?.category,
+    product?.product_type,
+    product?.description,
+    product?.overview,
+    product?.overview_summary,
+    product?.composition,
+    product?.skin_type,
+    product?.finish,
+    product?.scent_profile,
+    ...(product?.concerns || []),
+    ...(product?.benefits || []),
+    ...(product?.features || []),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
+function productSupportsSensitiveSkin(product) {
+  const haystack = getPdpSignalText(product);
+  const skinType = String(product?.skin_type || "").toLowerCase();
+  return (
+    skinType.includes("sensitive") ||
+    /\bsensitive skin|gentle|low-irritant|delicate skin|dermatologist-tested\b/.test(haystack) ||
+    Boolean(product?.fragrance_free)
+  );
+}
+
+function productHasFragrance(product) {
+  if (product?.fragrance_free) return false;
+  return /\bfragrance|parfum|scented|perfumed\b/.test(
+    `${product?.composition || ""} ${product?.description || ""} ${product?.overview || ""}`.toLowerCase()
+  );
+}
+
+function productMentionsNoWhiteCast(product) {
+  return /\bno white cast|invisible|clear finish|transparent|sheer\b/.test(
+    getPdpSignalText(product)
+  );
+}
+
+function productMentionsMakeupCompatibility(product) {
+  return /\bunder makeup|over makeup|makeup|primer-ready|makeup-ready\b/.test(
+    getPdpSignalText(product)
+  );
+}
+
+function normalizePdpCategoryForSearch(product) {
+  const role = getProductRoutineRole(product);
+  switch (role) {
+    case "eye-care":
+      return "eye cream";
+    case "moisturizer":
+      return "moisturizer";
+    case "serum":
+      return "serum";
+    case "sunscreen":
+      return "sunscreen";
+    case "cleanser":
+      return "cleanser";
+    default:
+      return String(product?.product_type || product?.category || "skincare")
+        .split("/")
+        .pop()
+        .trim()
+        .toLowerCase();
+  }
+}
+
+function buildPdpSearchAction(key, label, query, intentFilters = null) {
+  return {
+    key,
+    label,
+    type: "search",
+    query,
+    intentFilters,
+  };
+}
+
+function buildPdpFaqAction(key, label) {
+  return {
+    key,
+    label,
+    type: "faq",
+  };
+}
+
+function buildPdpSelectionAction(key, label) {
+  return {
+    key,
+    label,
+    type: "selection",
+  };
+}
+
+function buildPdpRoutineAction(product) {
+  const role = getProductRoutineRole(product);
+  switch (role) {
+    case "cleanser":
+      return buildPdpSelectionAction("suggest-pairing", "What should I use after this?");
+    case "serum":
+      return buildPdpSelectionAction("suggest-pairing", "Build the rest of my routine");
+    case "moisturizer":
+      return buildPdpSelectionAction("suggest-pairing", "What pairs well with this?");
+    case "sunscreen":
+      return buildPdpSelectionAction("suggest-pairing", "What pairs well with this?");
+    case "eye-care":
+      return buildPdpSelectionAction("suggest-pairing", "Build an eye-care routine");
+    default:
+      return buildPdpSelectionAction("suggest-pairing", "Build my routine");
+  }
+}
+
+function buildPdpRedirectAction(product) {
+  const role = getProductRoutineRole(product);
+  const category = normalizePdpCategoryForSearch(product);
+  if (!isFragranceProduct(product) && productHasFragrance(product)) {
+    return buildPdpSearchAction(
+      "fragrance-free-alternative",
+      "Show fragrance-free alternatives",
+      `fragrance-free ${category}`,
+      {
+        discoveryIntent: {
+          product_category: role === "eye-care" ? "eye cream" : category,
+          fragrance_free: true,
+        },
+      }
+    );
   }
 
-  if (isMakeupProduct(product)) {
-    return [
-      { key: "cancellation-policy", label: "What is the cancellation policy?" },
-      { key: "long-wear", label: "Is it long-wearing?" },
-      ingredientAction,
-    ];
+  if ((role === "cleanser" || role === "moisturizer" || role === "serum") && !productSupportsSensitiveSkin(product)) {
+    return buildPdpSearchAction(
+      "gentler-alternative",
+      "Show gentler options",
+      `gentle ${category} for sensitive skin`,
+      {
+        discoveryIntent: {
+          product_category: category,
+          skin_type: "sensitive",
+        },
+      }
+    );
   }
 
-  if (isHaircareProduct(product)) {
-    return [
-      { key: "cancellation-policy", label: "What is the cancellation policy?" },
-      { key: "color-safe", label: "Is it color-safe?" },
-      ingredientAction,
-    ];
+  if (role === "sunscreen" && !productMentionsNoWhiteCast(product)) {
+    return buildPdpSearchAction(
+      "invisible-finish-alternative",
+      "Show invisible-finish SPF",
+      "invisible finish sunscreen",
+      {
+        discoveryIntent: {
+          product_category: "sunscreen",
+        },
+      }
+    );
   }
+
+  return buildPdpSelectionAction("show-similar", "Show similar options");
+}
+
+function buildContextualPdpCandidates(product) {
+  const role = getProductRoutineRole(product);
+  const searchCategory = normalizePdpCategoryForSearch(product);
+  const queryText = String(lastQuery || "").toLowerCase();
+  const intent = lastDiscoveryIntent || {};
+  const candidates = [];
+  const addCandidate = (lane, score, action) => {
+    if (!action) return;
+    candidates.push({ lane, score, action });
+  };
 
   if (isFragranceProduct(product)) {
-    return [
-      { key: "cancellation-policy", label: "What is the cancellation policy?" },
-      { key: "scent-profile", label: "What is the scent profile?" },
-      ingredientAction,
-    ];
+    addCandidate("confidence", 10, buildPdpFaqAction("scent-profile", "What does it smell like?"));
+  } else if (role === "sunscreen") {
+    addCandidate(
+      "confidence",
+      productSupportsSensitiveSkin(product) || /\bsensitive\b/.test(queryText) ? 10 : 7,
+      buildPdpFaqAction("sensitive-skin", "Good for sensitive skin?")
+    );
+    addCandidate(
+      "confidence",
+      productMentionsNoWhiteCast(product) || /\bwhite cast|invisible|clear\b/.test(queryText) ? 9 : 7,
+      buildPdpFaqAction("white-cast", "Will this leave a white cast?")
+    );
+    addCandidate(
+      "confidence",
+      productMentionsMakeupCompatibility(product) || /\bmakeup\b/.test(queryText) ? 8 : 6,
+      buildPdpFaqAction("good-under-makeup", "Good under makeup?")
+    );
+  } else if (isHaircareProduct(product)) {
+    addCandidate("confidence", 8, buildPdpFaqAction("color-safe", "Is it color-safe?"));
+  } else if (isMakeupProduct(product)) {
+    addCandidate("confidence", 8, buildPdpFaqAction("long-wear", "Is it long-wearing?"));
+  } else {
+    addCandidate(
+      "confidence",
+      product.how_to_use ? 9 : 7,
+      buildPdpFaqAction("how-to-use", "How do I use this?")
+    );
+    if (productSupportsSensitiveSkin(product) && isSkincareProduct(product)) {
+      addCandidate("confidence", 8, buildPdpFaqAction("sensitive-skin", "Good for sensitive skin?"));
+    }
   }
 
-  if (isToolProduct(product)) {
-    return [
-      { key: "cancellation-policy", label: "What is the cancellation policy?" },
-      { key: "how-to-use", label: "How do I use this?" },
-      ingredientAction,
-    ];
+  addCandidate(
+    "confidence",
+    Array.isArray(product.ingredients) && product.ingredients.length ? 6 : 4,
+    buildPdpFaqAction("ingredients", "What are the ingredients?")
+  );
+
+  addCandidate(
+    "commitment",
+    hasDiscoveryIntentFilters(intent) ? 10 : 7,
+    buildPdpFaqAction(
+      hasDiscoveryIntentFilters(intent) ? "why-match" : "who-is-it-for",
+      hasDiscoveryIntentFilters(intent) ? "Why is this a good match?" : "Who is this best for?"
+    )
+  );
+  addCandidate(
+    "commitment",
+    5,
+    buildPdpSearchAction(
+      "best-rated-in-category",
+      `Show top rated ${searchCategory}s`,
+      `best rated ${searchCategory}`,
+      {
+        discoveryIntent: {
+          product_category: searchCategory,
+        },
+      }
+    )
+  );
+
+  addCandidate("routine", 9, buildPdpFaqAction("routine-fit", "Where does this fit in a routine?"));
+  addCandidate("routine", 8, buildPdpRoutineAction(product));
+  addCandidate("redirect", 7, buildPdpRedirectAction(product));
+
+  return candidates;
+}
+
+function selectPdpActions(product, excludeKey = null) {
+  const candidates = buildContextualPdpCandidates(product)
+    .filter(({ action }) => action?.key !== excludeKey)
+    .sort((left, right) => right.score - left.score);
+  const laneOrder = ["confidence", "commitment", "routine", "redirect"];
+  const selected = [];
+  const seenKeys = new Set();
+
+  laneOrder.forEach((lane) => {
+    const next = candidates.find(
+      (candidate) => candidate.lane === lane && !seenKeys.has(candidate.action.key)
+    );
+    if (!next) return;
+    selected.push(next.action);
+    seenKeys.add(next.action.key);
+  });
+
+  candidates.forEach((candidate) => {
+    if (selected.length >= 4) return;
+    if (seenKeys.has(candidate.action.key)) return;
+    selected.push(candidate.action);
+    seenKeys.add(candidate.action.key);
+  });
+
+  if (!selected.length) {
+    selected.push(buildPdpFaqAction("summary", "Tell me more about this"));
   }
 
-  return [
-    { key: "cancellation-policy", label: "What is the cancellation policy?" },
-    { key: "formulation", label: "What is the formula like?" },
-    ingredientAction,
-  ];
+  return selected.slice(0, 4);
+}
+
+function buildPdpFaqActions(product) {
+  return selectPdpActions(product).filter((action) => action.type === "faq");
 }
 
 function extractIngredientsFromComposition(composition) {
@@ -5044,6 +5273,68 @@ function answerPdpFaq(product, key) {
           : ` It is currently ${currentPrice}.`;
       return `${product.name}.${msrpText}`;
     }
+    case "why-match": {
+      const intent = lastDiscoveryIntent || {};
+      const matchReasons = [];
+      const concernText = Array.isArray(product.concerns)
+        ? product.concerns.map((item) => String(item).toLowerCase())
+        : [];
+      const benefitsText = Array.isArray(product.benefits)
+        ? product.benefits.map((item) => String(item).toLowerCase())
+        : [];
+      const finishText = String(product.finish || "").toLowerCase();
+      if (intent.skin_type && productSupportsSensitiveSkin(product)) {
+        matchReasons.push(`${intent.skin_type} skin`);
+      }
+      if (
+        intent.concern &&
+        (concernText.some((item) => item.includes(String(intent.concern).toLowerCase())) ||
+          benefitsText.some((item) => item.includes(String(intent.concern).toLowerCase())))
+      ) {
+        matchReasons.push(`${intent.concern}`);
+      }
+      if (intent.finish && finishText.includes(String(intent.finish).toLowerCase())) {
+        matchReasons.push(`${intent.finish} finish`);
+      }
+      if (matchReasons.length > 0) {
+        return `This looks like a strong match because it lines up with your preference for ${matchReasons.join(", ")}.`;
+      }
+      return `This stands out for ${product.name} because it aligns well with the type of ${normalizePdpCategoryForSearch(product)} you were browsing.`;
+    }
+    case "routine-fit": {
+      switch (getProductRoutineRole(product)) {
+        case "cleanser":
+          return "Use this first on clean, damp skin. It is your cleansing step before serums or moisturizers.";
+        case "serum":
+          return "Use this after cleansing and before moisturizer so the treatment step can absorb well.";
+        case "moisturizer":
+          return "Use this after cleansing and serum to seal in hydration. In the morning, follow with sunscreen if it does not already include SPF.";
+        case "sunscreen":
+          return "Use this as the final step of your morning skincare routine, after moisturizer and before makeup if you wear it.";
+        case "eye-care":
+          return "Apply this after cleansing and serum, then follow with your moisturizer around the rest of the face.";
+        default:
+          return "This fits best after cleansing, layered in the step that matches your routine goals.";
+      }
+    }
+    case "sensitive-skin": {
+      if (productSupportsSensitiveSkin(product)) {
+        return "Yes — this looks suitable for sensitive skin based on the product details and gentle-support cues in the catalog.";
+      }
+      return "It may work for many shoppers, but it is not clearly positioned as a sensitive-skin formula. I can show gentler alternatives if you want.";
+    }
+    case "white-cast": {
+      if (productMentionsNoWhiteCast(product)) {
+        return "This one is described with a more invisible, sheer finish, so it is less likely to leave a noticeable white cast.";
+      }
+      return "The product details do not clearly promise a no-white-cast finish. If that is important, I can show more invisible-finish SPF options.";
+    }
+    case "good-under-makeup": {
+      if (productMentionsMakeupCompatibility(product)) {
+        return "Yes — the product details suggest it layers well with makeup.";
+      }
+      return "It should layer fine for most routines, though the product details do not explicitly position it as a makeup-prep formula.";
+    }
     default:
       return "Let me know what you'd like to know about this item.";
   }
@@ -5142,24 +5433,11 @@ function getActivePdpContext() {
 }
 
 function buildPdpActions(product) {
-  const actions = [
-    ...buildPdpFaqActions(product),
-    { key: "upsell", label: "Show skincare bestsellers", type: "search" },
-    { key: "cross-sell", label: "Find a matching cleanser", type: "search" },
-  ];
-
-  return actions.slice(0, 5);
+  return selectPdpActions(product);
 }
 
 function buildPdpFollowupActions(product, excludeKey) {
-  const faqActions = buildPdpFaqActions(product).filter(
-    (action) => action.key !== excludeKey
-  );
-  return [
-    ...faqActions.map((action) => ({ ...action, type: "faq" })),
-    { key: "upsell", label: "Show skincare bestsellers", type: "search" },
-    { key: "cross-sell", label: "Find a matching cleanser", type: "search" },
-  ];
+  return selectPdpActions(product, excludeKey);
 }
 
 function createFaqAnswerBubble(product, actionKey) {
@@ -5177,6 +5455,7 @@ function createPdpFollowupChipsRow(product, excludeKey) {
   const row = document.createElement("div");
   row.className = "pdp-followup-chips-row";
   const actions = buildPdpFollowupActions(product, excludeKey);
+  const actionMap = new Map(actions.map((action) => [action.key, action]));
   row.innerHTML = actions
     .map((action) => {
       const type = action.type || "faq";
@@ -5190,34 +5469,36 @@ function createPdpFollowupChipsRow(product, excludeKey) {
   row.addEventListener("click", (event) => {
     const button = event.target.closest(".chip");
     if (!button) return;
-    const label = button.textContent.trim();
-    const actionType = button.dataset.actionType || "faq";
     const actionKey = button.dataset.actionKey || "";
+    const action = actionMap.get(actionKey);
+    if (!action) return;
     hideNbaPillSet(row);
-    handlePdpAction(product, actionType, actionKey, label);
+    handlePdpAction(product, action);
   });
 
   return row;
 }
 
-function handlePdpAction(product, actionType, actionKey, label) {
+function handlePdpAction(product, action) {
   activePdpProduct = product;
-  addBubble("user", label);
+  addBubble("user", action.label);
 
-  if (actionType === "search") {
-    if (actionKey === "cross-sell") {
-      runSearch("cleanser", null, false, {
-        discoveryIntent: {
-          product_category: "cleanser",
-        },
-      });
-      return;
-    }
-    runSearch(label, null, false, lastIntentFilters);
+  if (action.type === "selection") {
+    runWithLatency(() => {
+      showSelectionActionResults(
+        product,
+        action.key === "show-similar" ? "show-similar" : "suggest-pairing"
+      );
+    }, LATENCY_MS, "Finding recommendations...");
     return;
   }
 
-  if (actionKey === "cancellation-policy") {
+  if (action.type === "search") {
+    runSearch(action.query || action.label, null, false, action.intentFilters || lastIntentFilters);
+    return;
+  }
+
+  if (action.key === "cancellation-policy") {
     runWithLatency(
       () => {
         addReturnPolicyAnswer();
@@ -5231,8 +5512,8 @@ function handlePdpAction(product, actionType, actionKey, label) {
 
   runWithLatency(
     () => {
-      chatEl.append(createFaqAnswerBubble(product, actionKey));
-      chatEl.append(createPdpFollowupChipsRow(product, actionKey));
+      chatEl.append(createFaqAnswerBubble(product, action.key));
+      chatEl.append(createPdpFollowupChipsRow(product, action.key));
       updateScrollButton();
     },
     LATENCY_MS,
@@ -5673,6 +5954,7 @@ function createPdpBubble(product) {
   const actionChips = document.createElement("div");
   actionChips.className = "pdp-action-chips";
   const actions = buildPdpActions(product);
+  const actionMap = new Map(actions.map((action) => [action.key, action]));
   actionChips.innerHTML = actions
     .map((action) => {
       const type = action.type || "faq";
@@ -5685,11 +5967,11 @@ function createPdpBubble(product) {
   actionChips.addEventListener("click", (event) => {
     const button = event.target.closest(".chip");
     if (!button) return;
-    const label = button.textContent.trim();
-    const actionType = button.dataset.actionType || "faq";
     const actionKey = button.dataset.actionKey || "";
+    const action = actionMap.get(actionKey);
+    if (!action) return;
     hideNbaPillSet(actionChips);
-    handlePdpAction(product, actionType, actionKey, label);
+    handlePdpAction(product, action);
   });
   bubble.append(actionChips);
 
