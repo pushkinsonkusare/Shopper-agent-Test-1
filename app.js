@@ -1,5 +1,7 @@
-const catalogPath = "/api/catalog";
+const STATIC_CATALOG_PATH = "./shiseido-catalog.json";
 const agentChatPath = "/api/chat";
+const IS_GITHUB_PAGES =
+  typeof window !== "undefined" && /github\.io$/i.test(window.location.hostname);
 const MAX_AGENT_HISTORY = 8;
 const SHISEIDO_RETURNS_URL =
   "https://www.shiseido.com/us/en/customerservice?cid=returns";
@@ -6040,7 +6042,17 @@ function normalizeCatalogProduct(product) {
   };
 }
 
+function extractCatalogProducts(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.products)) return payload.products;
+  return [];
+}
+
 async function requestAgentResponse(query, intentFilters) {
+  if (IS_GITHUB_PAGES) {
+    throw new Error("Static deployment does not expose the chat API.");
+  }
+
   const response = await fetch(agentChatPath, {
     method: "POST",
     headers: {
@@ -6246,13 +6258,13 @@ function setupEvents() {
   observer.observe(chatEl, { childList: true });
 }
 
-fetch(catalogPath)
+fetch(STATIC_CATALOG_PATH)
   .then((response) => {
     if (!response.ok) throw new Error("Catalog not found");
     return response.json();
   })
   .then((catalog) => {
-    allProducts = (catalog.products || []).map((product) =>
+    allProducts = extractCatalogProducts(catalog).map((product) =>
       normalizeCatalogProduct(product)
     );
     allProducts = shuffle(allProducts);
@@ -6263,6 +6275,8 @@ fetch(catalogPath)
   .catch(() => {
     addBubble(
       "assistant",
-      "Could not load the catalog. Start the local app server with `npm start`, then open http://localhost:8080."
+      IS_GITHUB_PAGES
+        ? "Could not load the product catalog for this published site. Please refresh the page, and make sure `shiseido-catalog.json` is deployed alongside the app."
+        : "Could not load the catalog. Start the local app server with `npm start`, then open http://localhost:8080."
     );
   });

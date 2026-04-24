@@ -1,0 +1,405 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 4 0 R 5 0 R 6 0 R 7 0 R 8 0 R 9 0 R 10 0 R] /Count 8 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 12 0 R >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 13 0 R >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 14 0 R >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 15 0 R >>
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 16 0 R >>
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 17 0 R >>
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 18 0 R >>
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 11 0 R >> >> /Contents 19 0 R >>
+endobj
+11 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+12 0 obj
+<< /Length 2760 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (Contextual PDP NBA Product Spec) Tj
+1 0 0 1 54 710 Tm (Purpose) Tj
+1 0 0 1 54 696 Tm (Define how next-best-action \(NBA\) chips shown after a product detail page \(PDP\)) Tj
+1 0 0 1 54 682 Tm (interaction should become context-aware, confidence-building, and conversion-) Tj
+1 0 0 1 54 668 Tm (oriented instead of generic.) Tj
+1 0 0 1 54 640 Tm (Problem Statement) Tj
+1 0 0 1 54 626 Tm (The current PDP follow-up chips are too static. They often show the same FAQ and) Tj
+1 0 0 1 54 612 Tm (browse actions regardless of the product, shopper intent, objections, or cart) Tj
+1 0 0 1 54 598 Tm (state. This creates three issues:) Tj
+1 0 0 1 54 570 Tm (1. The experience feels generic rather than tailored to the shopper.) Tj
+1 0 0 1 54 556 Tm (2. The chips do not consistently address the reason a shopper is hesitating.) Tj
+1 0 0 1 54 542 Tm (3. The chip set does not reliably move the shopper toward add-to-cart, a better) Tj
+1 0 0 1 54 528 Tm (   fit alternative, or the next routine step.) Tj
+1 0 0 1 54 500 Tm (Product Goal) Tj
+1 0 0 1 54 486 Tm (After a shopper lands on or interacts with a PDP, the NBA chips should help them) Tj
+1 0 0 1 54 472 Tm (do one of the following:) Tj
+1 0 0 1 54 444 Tm (1. Build confidence in the product they are viewing.) Tj
+1 0 0 1 54 430 Tm (2. Take the next step toward purchase.) Tj
+1 0 0 1 54 416 Tm (3. Discover the most relevant complementary product.) Tj
+1 0 0 1 54 402 Tm (4. Recover gracefully when the current product may not be the best fit.) Tj
+1 0 0 1 54 374 Tm (Success Criteria) Tj
+1 0 0 1 54 360 Tm (The PDP NBA experience should:) Tj
+1 0 0 1 54 332 Tm (? Feel specific to the product and shopper context.) Tj
+1 0 0 1 54 318 Tm (? Surface the most likely objection or next step.) Tj
+1 0 0 1 54 304 Tm (? Increase add-to-cart rate from PDP conversations.) Tj
+1 0 0 1 54 290 Tm (? Increase productive follow-up interactions.) Tj
+1 0 0 1 54 276 Tm (? Reduce generic "browse more" behavior when a better contextual action exists.) Tj
+1 0 0 1 54 248 Tm (Non-Goals) Tj
+1 0 0 1 54 234 Tm (? Rebuilding the overall chat architecture.) Tj
+1 0 0 1 54 220 Tm (? Generating free-form NBA copy with an LLM at runtime.) Tj
+1 0 0 1 54 206 Tm (? Replacing the full PDP card or checkout logic.) Tj
+1 0 0 1 54 192 Tm (? Solving personalization beyond session-level context in v1.) Tj
+1 0 0 1 54 164 Tm (Design Principles) Tj
+1 0 0 1 54 150 Tm (1. Be contextual, not generic.) Tj
+1 0 0 1 54 136 Tm (   Chips should reflect the product type, product attributes, session intent,) Tj
+1 0 0 1 54 122 Tm (   and shopper stage.) Tj
+1 0 0 1 54 94 Tm (2. Resolve friction before expanding choice.) Tj
+1 0 0 1 54 80 Tm (   If the shopper is hesitating, answer the likely concern before showing broad) Tj
+ET
+endstream
+endobj
+13 0 obj
+<< /Length 2243 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (   discovery actions.) Tj
+1 0 0 1 54 710 Tm (3. Promote one clear next step.) Tj
+1 0 0 1 54 696 Tm (   At least one chip should move the shopper closer to purchase.) Tj
+1 0 0 1 54 668 Tm (4. Redirect only when there is evidence of mismatch.) Tj
+1 0 0 1 54 654 Tm (   Alternative suggestions should appear when the current product may be wrong) Tj
+1 0 0 1 54 640 Tm (   for the shopper, not as default noise.) Tj
+1 0 0 1 54 612 Tm (5. Keep the chip set compact.) Tj
+1 0 0 1 54 598 Tm (   Show 3 to 4 strong actions, not 5 generic ones.) Tj
+1 0 0 1 54 570 Tm (User Jobs To Be Done) Tj
+1 0 0 1 54 556 Tm (When I am considering a product on the PDP, help me:) Tj
+1 0 0 1 54 528 Tm (? Understand whether the product is right for me.) Tj
+1 0 0 1 54 514 Tm (? Resolve my biggest concern quickly.) Tj
+1 0 0 1 54 500 Tm (? See how the product fits into my routine or regimen.) Tj
+1 0 0 1 54 486 Tm (? Pick the next best action without restarting my shopping journey.) Tj
+1 0 0 1 54 458 Tm (Target User States) Tj
+1 0 0 1 54 444 Tm (1. Evaluating fit) Tj
+1 0 0 1 54 430 Tm (   The shopper wants to know if the product is suitable.) Tj
+1 0 0 1 54 402 Tm (2. Handling objections) Tj
+1 0 0 1 54 388 Tm (   The shopper is worried about formula, scent, finish, usage, compatibility,) Tj
+1 0 0 1 54 374 Tm (   price, or safety.) Tj
+1 0 0 1 54 346 Tm (3. Ready to buy) Tj
+1 0 0 1 54 332 Tm (   The shopper is close to purchase and needs a final confidence boost.) Tj
+1 0 0 1 54 304 Tm (4. Recovering from mismatch) Tj
+1 0 0 1 54 290 Tm (   The shopper may need a better alternative rather than more reassurance.) Tj
+1 0 0 1 54 262 Tm (NBA Chip Framework) Tj
+1 0 0 1 54 248 Tm (Each PDP NBA row should be composed from up to four chip slots:) Tj
+1 0 0 1 54 220 Tm (1. Confidence) Tj
+1 0 0 1 54 206 Tm (   Answers the strongest likely objection for this product.) Tj
+1 0 0 1 54 178 Tm (2. Commitment) Tj
+1 0 0 1 54 164 Tm (   Encourages a purchase-adjacent action.) Tj
+1 0 0 1 54 136 Tm (3. Routine) Tj
+1 0 0 1 54 122 Tm (   Shows what complements this product or where it fits in usage order.) Tj
+1 0 0 1 54 94 Tm (4. Redirect) Tj
+1 0 0 1 54 80 Tm (   Offers a better-fit alternative only when mismatch risk is meaningful.) Tj
+ET
+endstream
+endobj
+14 0 obj
+<< /Length 2514 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 724 Tm (Recommended Display Rules) Tj
+1 0 0 1 54 710 Tm (? Default to 3 chips.) Tj
+1 0 0 1 54 696 Tm (? Expand to 4 chips when there is a strong redirect or routine opportunity.) Tj
+1 0 0 1 54 682 Tm (? Always include at least 1 confidence or commitment chip.) Tj
+1 0 0 1 54 668 Tm (? Never show more than 1 redirect chip.) Tj
+1 0 0 1 54 654 Tm (? Avoid generic operational chips unless the shopper explicitly signals that need.) Tj
+1 0 0 1 54 626 Tm (Context Inputs) Tj
+1 0 0 1 54 612 Tm (The chip selector should rank actions using the following context:) Tj
+1 0 0 1 54 584 Tm (1. Product context) Tj
+1 0 0 1 54 570 Tm (? Category and product type) Tj
+1 0 0 1 54 556 Tm (? Key attributes such as fragrance-free, active ingredients, finish, scent) Tj
+1 0 0 1 54 542 Tm (  family, color-safe, waterproof, SPF, or texture) Tj
+1 0 0 1 54 528 Tm (? Price tier) Tj
+1 0 0 1 54 514 Tm (? Review density and rating) Tj
+1 0 0 1 54 500 Tm (? Variant complexity) Tj
+1 0 0 1 54 472 Tm (2. Conversation context) Tj
+1 0 0 1 54 458 Tm (? Shopper's most recent question) Tj
+1 0 0 1 54 444 Tm (? Repeated concerns or objections) Tj
+1 0 0 1 54 430 Tm (? Search/refinement history in the session) Tj
+1 0 0 1 54 416 Tm (? Signals such as budget sensitivity, ingredient sensitivity, routine building,) Tj
+1 0 0 1 54 402 Tm (  or comparison behavior) Tj
+1 0 0 1 54 374 Tm (3. Journey context) Tj
+1 0 0 1 54 360 Tm (? Whether the shopper is browsing, evaluating, comparing, or ready to purchase) Tj
+1 0 0 1 54 346 Tm (? Whether they already asked a PDP FAQ) Tj
+1 0 0 1 54 332 Tm (? Whether they rejected a prior recommendation) Tj
+1 0 0 1 54 304 Tm (4. Cart/routine context) Tj
+1 0 0 1 54 290 Tm (? What is already in cart) Tj
+1 0 0 1 54 276 Tm (? Missing routine steps) Tj
+1 0 0 1 54 262 Tm (? Duplicative products already selected) Tj
+1 0 0 1 54 248 Tm (? Cross-sell opportunities that make sense for the current item) Tj
+1 0 0 1 54 220 Tm (Decision Model) Tj
+1 0 0 1 54 206 Tm (Step 1: Infer shopper stage) Tj
+1 0 0 1 54 178 Tm (? Evaluation: asks about fit, ingredients, scent, finish, usage) Tj
+1 0 0 1 54 164 Tm (? Objection handling: shows concern about irritation, texture, longevity,) Tj
+1 0 0 1 54 150 Tm (  performance, or compatibility) Tj
+1 0 0 1 54 136 Tm (? Purchase-ready: engages with quantity, size, shade, reviews, add-to-cart) Tj
+1 0 0 1 54 122 Tm (? Mismatch-risk: asks for alternatives or expresses doubt that the product fits) Tj
+1 0 0 1 54 94 Tm (Step 2: Generate candidate actions) Tj
+ET
+endstream
+endobj
+15 0 obj
+<< /Length 2186 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (? Product-specific FAQs) Tj
+1 0 0 1 54 724 Tm (? Product-specific reassurance actions) Tj
+1 0 0 1 54 710 Tm (? Routine or pairing actions) Tj
+1 0 0 1 54 696 Tm (? Alternative-fit actions) Tj
+1 0 0 1 54 682 Tm (? Broad discovery actions only as fallback) Tj
+1 0 0 1 54 654 Tm (Step 3: Score candidates) Tj
+1 0 0 1 54 626 Tm (Suggested scoring signals:) Tj
+1 0 0 1 54 598 Tm (? +4 directly answers the strongest likely objection) Tj
+1 0 0 1 54 584 Tm (? +3 matches recent shopper language) Tj
+1 0 0 1 54 570 Tm (? +3 supports conversion right now) Tj
+1 0 0 1 54 556 Tm (? +2 uses known product attributes) Tj
+1 0 0 1 54 542 Tm (? +2 matches cart or routine context) Tj
+1 0 0 1 54 528 Tm (? -3 is generic across many PDPs) Tj
+1 0 0 1 54 514 Tm (? -4 duplicates a recently answered question) Tj
+1 0 0 1 54 500 Tm (? -5 is weakly relevant to the product type) Tj
+1 0 0 1 54 472 Tm (Step 4: Select final chips) Tj
+1 0 0 1 54 444 Tm (? Pick the highest scoring confidence chip) Tj
+1 0 0 1 54 430 Tm (? Pick the highest scoring commitment chip) Tj
+1 0 0 1 54 416 Tm (? Pick the highest scoring routine chip if relevant) Tj
+1 0 0 1 54 402 Tm (? Pick the highest scoring redirect chip only if mismatch risk is above threshold) Tj
+1 0 0 1 54 388 Tm (? Use a broad fallback chip only if a slot cannot be filled contextually) Tj
+1 0 0 1 54 360 Tm (Candidate Actions By Intent) Tj
+1 0 0 1 54 346 Tm (Confidence chips) Tj
+1 0 0 1 54 318 Tm (? Good for sensitive skin?) Tj
+1 0 0 1 54 304 Tm (? How do I use this?) Tj
+1 0 0 1 54 290 Tm (? What does it feel like?) Tj
+1 0 0 1 54 276 Tm (? Will this leave a white cast?) Tj
+1 0 0 1 54 262 Tm (? What does it smell like?) Tj
+1 0 0 1 54 248 Tm (? Is it color-safe?) Tj
+1 0 0 1 54 234 Tm (? How long does it wear?) Tj
+1 0 0 1 54 220 Tm (? What are the ingredients?) Tj
+1 0 0 1 54 192 Tm (Commitment chips) Tj
+1 0 0 1 54 164 Tm (? Is this a good first pick?) Tj
+1 0 0 1 54 150 Tm (? Which size should I choose?) Tj
+1 0 0 1 54 136 Tm (? How long will this last?) Tj
+1 0 0 1 54 122 Tm (? Show reviews from similar shoppers) Tj
+1 0 0 1 54 108 Tm (? Best way to start with this) Tj
+1 0 0 1 54 94 Tm (? Add this to my routine) Tj
+ET
+endstream
+endobj
+16 0 obj
+<< /Length 1781 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (Routine chips) Tj
+1 0 0 1 54 710 Tm (? What pairs well with this?) Tj
+1 0 0 1 54 696 Tm (? What goes before this?) Tj
+1 0 0 1 54 682 Tm (? What goes after this?) Tj
+1 0 0 1 54 668 Tm (? Build a simple routine around this) Tj
+1 0 0 1 54 654 Tm (? Find a matching cleanser) Tj
+1 0 0 1 54 640 Tm (? Find a compatible moisturizer) Tj
+1 0 0 1 54 612 Tm (Redirect chips) Tj
+1 0 0 1 54 584 Tm (? Need a gentler option?) Tj
+1 0 0 1 54 570 Tm (? Show fragrance-free alternatives) Tj
+1 0 0 1 54 556 Tm (? Show richer options) Tj
+1 0 0 1 54 542 Tm (? Show lightweight alternatives) Tj
+1 0 0 1 54 528 Tm (? Show better options for oily skin) Tj
+1 0 0 1 54 514 Tm (? Compare with a bestseller) Tj
+1 0 0 1 54 486 Tm (Broad fallback chips) Tj
+1 0 0 1 54 458 Tm (? Show bestsellers) Tj
+1 0 0 1 54 444 Tm (? Show top rated in this category) Tj
+1 0 0 1 54 430 Tm (? Compare similar products) Tj
+1 0 0 1 54 402 Tm (Product Family Guidelines) Tj
+1 0 0 1 54 388 Tm (Skincare) Tj
+1 0 0 1 54 360 Tm (Prioritize:) Tj
+1 0 0 1 54 346 Tm (? Sensitive skin compatibility) Tj
+1 0 0 1 54 332 Tm (? Active ingredient strength) Tj
+1 0 0 1 54 318 Tm (? Routine order) Tj
+1 0 0 1 54 304 Tm (? Texture and finish) Tj
+1 0 0 1 54 290 Tm (? Fragrance-free status) Tj
+1 0 0 1 54 262 Tm (Good examples:) Tj
+1 0 0 1 54 248 Tm (? Good for sensitive skin?) Tj
+1 0 0 1 54 234 Tm (? How often should I use this?) Tj
+1 0 0 1 54 220 Tm (? What goes after this?) Tj
+1 0 0 1 54 206 Tm (? Need a gentler alternative?) Tj
+1 0 0 1 54 178 Tm (Makeup) Tj
+1 0 0 1 54 150 Tm (Prioritize:) Tj
+1 0 0 1 54 136 Tm (? Finish) Tj
+1 0 0 1 54 122 Tm (? Wear time) Tj
+1 0 0 1 54 108 Tm (? Shade/undertone confidence) Tj
+1 0 0 1 54 94 Tm (? Transfer resistance) Tj
+1 0 0 1 54 80 Tm (? Skin type compatibility) Tj
+ET
+endstream
+endobj
+17 0 obj
+<< /Length 1711 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 724 Tm (Good examples:) Tj
+1 0 0 1 54 710 Tm (? What finish does this have?) Tj
+1 0 0 1 54 696 Tm (? Is it long-wearing?) Tj
+1 0 0 1 54 682 Tm (? Good for dry skin?) Tj
+1 0 0 1 54 668 Tm (? Show a more natural finish) Tj
+1 0 0 1 54 640 Tm (Fragrance) Tj
+1 0 0 1 54 612 Tm (Prioritize:) Tj
+1 0 0 1 54 598 Tm (? Scent profile) Tj
+1 0 0 1 54 584 Tm (? Strength and longevity) Tj
+1 0 0 1 54 570 Tm (? Day vs night fit) Tj
+1 0 0 1 54 556 Tm (? Seasonality or occasion) Tj
+1 0 0 1 54 528 Tm (Good examples:) Tj
+1 0 0 1 54 514 Tm (? What does it smell like?) Tj
+1 0 0 1 54 500 Tm (? How long does it last?) Tj
+1 0 0 1 54 486 Tm (? Better for day or night?) Tj
+1 0 0 1 54 472 Tm (? Show a fresher alternative) Tj
+1 0 0 1 54 444 Tm (Haircare) Tj
+1 0 0 1 54 416 Tm (Prioritize:) Tj
+1 0 0 1 54 402 Tm (? Hair type fit) Tj
+1 0 0 1 54 388 Tm (? Color safety) Tj
+1 0 0 1 54 374 Tm (? Repair vs hydration) Tj
+1 0 0 1 54 360 Tm (? Usage frequency) Tj
+1 0 0 1 54 332 Tm (Good examples:) Tj
+1 0 0 1 54 318 Tm (? Is it color-safe?) Tj
+1 0 0 1 54 304 Tm (? Best for dry or damaged hair?) Tj
+1 0 0 1 54 290 Tm (? How often should I use it?) Tj
+1 0 0 1 54 276 Tm (? Show a lighter option) Tj
+1 0 0 1 54 248 Tm (Example Chip Sets) Tj
+1 0 0 1 54 234 Tm (Example A: Vitamin C serum) Tj
+1 0 0 1 54 206 Tm (? Can I use this every day?) Tj
+1 0 0 1 54 192 Tm (? Will this help with dark spots?) Tj
+1 0 0 1 54 178 Tm (? What goes after this?) Tj
+1 0 0 1 54 164 Tm (? Show a gentler brightening option) Tj
+1 0 0 1 54 136 Tm (Example B: Fragranced moisturizer) Tj
+1 0 0 1 54 108 Tm (? Good for sensitive skin?) Tj
+1 0 0 1 54 94 Tm (? How does this feel on skin?) Tj
+1 0 0 1 54 80 Tm (? What pairs well with this?) Tj
+ET
+endstream
+endobj
+18 0 obj
+<< /Length 2176 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (? Need a fragrance-free alternative?) Tj
+1 0 0 1 54 710 Tm (Example C: Mineral sunscreen) Tj
+1 0 0 1 54 682 Tm (? Will this leave a white cast?) Tj
+1 0 0 1 54 668 Tm (? Good under makeup?) Tj
+1 0 0 1 54 654 Tm (? What cleanser removes this well?) Tj
+1 0 0 1 54 640 Tm (? Show fragrance-free SPF options) Tj
+1 0 0 1 54 612 Tm (Example D: Perfume) Tj
+1 0 0 1 54 584 Tm (? What does it smell like?) Tj
+1 0 0 1 54 570 Tm (? How long does it last?) Tj
+1 0 0 1 54 556 Tm (? Best for day or night?) Tj
+1 0 0 1 54 542 Tm (? Show a fresher alternative) Tj
+1 0 0 1 54 514 Tm (Fallback Rules) Tj
+1 0 0 1 54 500 Tm (Use a generic chip only when:) Tj
+1 0 0 1 54 472 Tm (? Product metadata is too sparse to infer meaningful objections) Tj
+1 0 0 1 54 458 Tm (? The shopper has not provided enough context yet) Tj
+1 0 0 1 54 444 Tm (? No product-specific pairing or redirect action is valid) Tj
+1 0 0 1 54 416 Tm (Even in fallback mode, the system should prefer category-relevant discovery over) Tj
+1 0 0 1 54 402 Tm (truly generic operational questions.) Tj
+1 0 0 1 54 374 Tm (V1 Rollout Recommendation) Tj
+1 0 0 1 54 360 Tm (Phase 1: Product-aware chips) Tj
+1 0 0 1 54 346 Tm (? Replace static PDP actions with product-family-specific chips) Tj
+1 0 0 1 54 332 Tm (? Remove always-on generic actions unless no contextual option exists) Tj
+1 0 0 1 54 304 Tm (Phase 2: Session-aware ranking) Tj
+1 0 0 1 54 290 Tm (? Boost chips that match recent shopper questions or refinement behavior) Tj
+1 0 0 1 54 276 Tm (? Suppress chips that repeat what was already answered) Tj
+1 0 0 1 54 248 Tm (Phase 3: Cart and routine awareness) Tj
+1 0 0 1 54 234 Tm (? Use in-cart products and routine gaps to choose pairings and redirects) Tj
+1 0 0 1 54 206 Tm (Phase 4: Optimization) Tj
+1 0 0 1 54 192 Tm (? Tune chip scoring and thresholds using interaction data) Tj
+1 0 0 1 54 164 Tm (Measurement Plan) Tj
+1 0 0 1 54 150 Tm (Primary metrics) Tj
+1 0 0 1 54 136 Tm (? PDP chip click-through rate) Tj
+1 0 0 1 54 122 Tm (? Add-to-cart rate after PDP chip interaction) Tj
+1 0 0 1 54 108 Tm (? Conversion rate after PDP chip interaction) Tj
+1 0 0 1 54 80 Tm (Secondary metrics) Tj
+ET
+endstream
+endobj
+19 0 obj
+<< /Length 1547 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (? Alternative-product click-through rate) Tj
+1 0 0 1 54 724 Tm (? Routine/pairing click-through rate) Tj
+1 0 0 1 54 710 Tm (? FAQ deflection success) Tj
+1 0 0 1 54 696 Tm (? Reduction in generic chip usage) Tj
+1 0 0 1 54 668 Tm (Quality metrics) Tj
+1 0 0 1 54 654 Tm (? Repeated chip rate in a single session) Tj
+1 0 0 1 54 640 Tm (? Irrelevant chip feedback rate) Tj
+1 0 0 1 54 626 Tm (? Share of chip rows containing at least one contextual action) Tj
+1 0 0 1 54 598 Tm (Open Questions) Tj
+1 0 0 1 54 584 Tm (1. Should the experience always reserve one slot for purchase-forward actions?) Tj
+1 0 0 1 54 570 Tm (2. How aggressive should redirect behavior be when mismatch risk is only moderate?) Tj
+1 0 0 1 54 556 Tm (3. Should review-based reassurance chips be introduced in v1 or v2?) Tj
+1 0 0 1 54 542 Tm (4. What minimum metadata is required for each product family to support good chips?) Tj
+1 0 0 1 54 514 Tm (Recommended v1 Direction) Tj
+1 0 0 1 54 500 Tm (The first release should move from a static PDP chip list to a ranked,) Tj
+1 0 0 1 54 486 Tm (contextual chip selector that prioritizes:) Tj
+1 0 0 1 54 458 Tm (1. Likely objection resolution) Tj
+1 0 0 1 54 444 Tm (2. Clear next-step conversion actions) Tj
+1 0 0 1 54 430 Tm (3. Routine-aware pairings) Tj
+1 0 0 1 54 416 Tm (4. Better-fit alternatives only when justified) Tj
+1 0 0 1 54 388 Tm (This will make the PDP NBA experience feel less generic, more useful, and more) Tj
+1 0 0 1 54 374 Tm (aligned to the shopper's actual buying journey.) Tj
+ET
+endstream
+endobj
+xref
+0 20
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000158 00000 n 
+0000000286 00000 n 
+0000000414 00000 n 
+0000000542 00000 n 
+0000000670 00000 n 
+0000000798 00000 n 
+0000000926 00000 n 
+0000001054 00000 n 
+0000001183 00000 n 
+0000001254 00000 n 
+0000004067 00000 n 
+0000006363 00000 n 
+0000008930 00000 n 
+0000011169 00000 n 
+0000013003 00000 n 
+0000014767 00000 n 
+0000016996 00000 n 
+trailer
+<< /Size 20 /Root 1 0 R >>
+startxref
+18596
+%%EOF

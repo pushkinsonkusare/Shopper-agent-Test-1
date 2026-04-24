@@ -1,0 +1,667 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 4 0 R 5 0 R 6 0 R 7 0 R 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R 13 0 R 14 0 R 15 0 R 16 0 R] /Count 14 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 18 0 R >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 19 0 R >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 20 0 R >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 21 0 R >>
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 22 0 R >>
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 23 0 R >>
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 24 0 R >>
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 25 0 R >>
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 26 0 R >>
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 27 0 R >>
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 28 0 R >>
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 29 0 R >>
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 30 0 R >>
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 17 0 R >> >> /Contents 31 0 R >>
+endobj
+17 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+18 0 obj
+<< /Length 2227 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (NBA Journey Product Spec) Tj
+1 0 0 1 54 710 Tm (Purpose) Tj
+1 0 0 1 54 696 Tm (Define a single product spec for next-best-actions \(NBAs\) across the full) Tj
+1 0 0 1 54 682 Tm (shopper journey:) Tj
+1 0 0 1 54 654 Tm (1. Home / landing / welcome card) Tj
+1 0 0 1 54 640 Tm (2. Product discovery questions) Tj
+1 0 0 1 54 626 Tm (3. Product listing page \(PLP\) results) Tj
+1 0 0 1 54 612 Tm (4. Product detail page \(PDP\)) Tj
+1 0 0 1 54 598 Tm (5. Cart confirmation) Tj
+1 0 0 1 54 584 Tm (6. Order confirmation) Tj
+1 0 0 1 54 570 Tm (7. Where is my order \(WISMO\) result) Tj
+1 0 0 1 54 542 Tm (This spec is intended to make NBA behavior feel connected across the journey) Tj
+1 0 0 1 54 528 Tm (instead of appearing as isolated chip sets at each step.) Tj
+1 0 0 1 54 500 Tm (Problem Statement) Tj
+1 0 0 1 54 486 Tm (Today, many NBA surfaces are useful but static. They often rely on hardcoded) Tj
+1 0 0 1 54 472 Tm (prompts or generic follow-up actions that do not fully reflect:) Tj
+1 0 0 1 54 444 Tm (? The shopper's current goal) Tj
+1 0 0 1 54 430 Tm (? The product category or product attributes) Tj
+1 0 0 1 54 416 Tm (? The stage of the buying journey) Tj
+1 0 0 1 54 402 Tm (? The shopper's prior choices in the session) Tj
+1 0 0 1 54 388 Tm (? The cart or order context) Tj
+1 0 0 1 54 360 Tm (As a result, the experience can feel generic, repetitive, or too browse-heavy) Tj
+1 0 0 1 54 346 Tm (at moments where the best next action should be clearer.) Tj
+1 0 0 1 54 318 Tm (Product Vision) Tj
+1 0 0 1 54 304 Tm (At every step of the journey, the NBA system should answer one question:) Tj
+1 0 0 1 54 276 Tm ("What is the most helpful next action for this shopper right now?") Tj
+1 0 0 1 54 248 Tm (That action may help the shopper:) Tj
+1 0 0 1 54 220 Tm (? Start faster) Tj
+1 0 0 1 54 206 Tm (? Clarify intent) Tj
+1 0 0 1 54 192 Tm (? Refine discovery) Tj
+1 0 0 1 54 178 Tm (? Build confidence) Tj
+1 0 0 1 54 164 Tm (? Complete purchase) Tj
+1 0 0 1 54 150 Tm (? Manage an order) Tj
+1 0 0 1 54 136 Tm (? Recover from friction) Tj
+1 0 0 1 54 108 Tm (Core Principles) Tj
+1 0 0 1 54 94 Tm (1. Stage-aware) Tj
+1 0 0 1 54 80 Tm (   NBAs should reflect where the shopper is in the journey.) Tj
+ET
+endstream
+endobj
+19 0 obj
+<< /Length 2086 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 724 Tm (2. Context-aware) Tj
+1 0 0 1 54 710 Tm (   NBAs should use product, cart, order, and conversation context.) Tj
+1 0 0 1 54 682 Tm (3. Conversion-aware) Tj
+1 0 0 1 54 668 Tm (   NBAs should prefer actions that move the shopper forward.) Tj
+1 0 0 1 54 640 Tm (4. Friction-first) Tj
+1 0 0 1 54 626 Tm (   When hesitation or confusion is detected, resolve that before expanding) Tj
+1 0 0 1 54 612 Tm (   choice.) Tj
+1 0 0 1 54 584 Tm (5. Compact and focused) Tj
+1 0 0 1 54 570 Tm (   Show a small number of high-confidence actions, not a wide list.) Tj
+1 0 0 1 54 542 Tm (6. Non-redundant) Tj
+1 0 0 1 54 528 Tm (   Avoid repeating recently answered or already dismissed actions.) Tj
+1 0 0 1 54 500 Tm (NBA System Goals) Tj
+1 0 0 1 54 486 Tm (? Increase productive chip engagement) Tj
+1 0 0 1 54 472 Tm (? Increase add-to-cart rate) Tj
+1 0 0 1 54 458 Tm (? Increase checkout and order-completion rate) Tj
+1 0 0 1 54 444 Tm (? Increase self-service success for post-purchase journeys) Tj
+1 0 0 1 54 430 Tm (? Reduce dead-end or generic interactions) Tj
+1 0 0 1 54 402 Tm (Non-Goals) Tj
+1 0 0 1 54 388 Tm (? Replacing free-text chat) Tj
+1 0 0 1 54 374 Tm (? Solving long-term shopper personalization in v1) Tj
+1 0 0 1 54 360 Tm (? Generating NBA labels with fully dynamic LLM copy in production) Tj
+1 0 0 1 54 346 Tm (? Redesigning all visual UI components in this phase) Tj
+1 0 0 1 54 318 Tm (Shared NBA Model) Tj
+1 0 0 1 54 304 Tm (All NBA surfaces should select actions from a common action taxonomy.) Tj
+1 0 0 1 54 276 Tm (Action Types) Tj
+1 0 0 1 54 262 Tm (1. Start) Tj
+1 0 0 1 54 248 Tm (   Helps the shopper begin quickly.) Tj
+1 0 0 1 54 220 Tm (2. Clarify) Tj
+1 0 0 1 54 206 Tm (   Asks for a missing preference or context signal.) Tj
+1 0 0 1 54 178 Tm (3. Refine) Tj
+1 0 0 1 54 164 Tm (   Narrows a result set.) Tj
+1 0 0 1 54 136 Tm (4. Confidence) Tj
+1 0 0 1 54 122 Tm (   Resolves hesitation or answers a likely objection.) Tj
+1 0 0 1 54 94 Tm (5. Commit) Tj
+1 0 0 1 54 80 Tm (   Moves toward cart, checkout, or a confident next purchase step.) Tj
+ET
+endstream
+endobj
+20 0 obj
+<< /Length 1940 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 724 Tm (6. Complement) Tj
+1 0 0 1 54 710 Tm (   Suggests a relevant pairing, accessory, or routine step.) Tj
+1 0 0 1 54 682 Tm (7. Redirect) Tj
+1 0 0 1 54 668 Tm (   Offers a better-fit path when there is mismatch risk.) Tj
+1 0 0 1 54 640 Tm (8. Support) Tj
+1 0 0 1 54 626 Tm (   Helps with post-purchase actions such as tracking, returns, and changes.) Tj
+1 0 0 1 54 598 Tm (Common Inputs For Ranking) Tj
+1 0 0 1 54 584 Tm (All NBA surfaces should consider the following signals where applicable:) Tj
+1 0 0 1 54 556 Tm (1. Session context) Tj
+1 0 0 1 54 542 Tm (? Recent user prompts) Tj
+1 0 0 1 54 528 Tm (? Recently clicked chips) Tj
+1 0 0 1 54 514 Tm (? Repeated concerns) Tj
+1 0 0 1 54 500 Tm (? Current intent category) Tj
+1 0 0 1 54 486 Tm (? Abandonment or hesitation signals) Tj
+1 0 0 1 54 458 Tm (2. Catalog or product context) Tj
+1 0 0 1 54 444 Tm (? Category and product type) Tj
+1 0 0 1 54 430 Tm (? Price tier) Tj
+1 0 0 1 54 416 Tm (? Attributes such as fragrance-free, finish, active ingredients, color-safe,) Tj
+1 0 0 1 54 402 Tm (  waterproof, scent family, or routine role) Tj
+1 0 0 1 54 388 Tm (? Rating and review count) Tj
+1 0 0 1 54 360 Tm (3. Cart context) Tj
+1 0 0 1 54 346 Tm (? Items already added) Tj
+1 0 0 1 54 332 Tm (? Category mix) Tj
+1 0 0 1 54 318 Tm (? Missing routine or bundle opportunities) Tj
+1 0 0 1 54 304 Tm (? Coupon or pricing state) Tj
+1 0 0 1 54 276 Tm (4. Order context) Tj
+1 0 0 1 54 262 Tm (? Shipment stage) Tj
+1 0 0 1 54 248 Tm (? Estimated delivery date) Tj
+1 0 0 1 54 234 Tm (? Number of items) Tj
+1 0 0 1 54 220 Tm (? Return eligibility) Tj
+1 0 0 1 54 192 Tm (5. Journey stage) Tj
+1 0 0 1 54 178 Tm (? Landing) Tj
+1 0 0 1 54 164 Tm (? Discovery) Tj
+1 0 0 1 54 150 Tm (? Evaluation) Tj
+1 0 0 1 54 136 Tm (? Purchase-ready) Tj
+1 0 0 1 54 122 Tm (? Post-purchase support) Tj
+1 0 0 1 54 94 Tm (Global Selection Rules) Tj
+1 0 0 1 54 80 Tm (? Default to 3 chips.) Tj
+ET
+endstream
+endobj
+21 0 obj
+<< /Length 2035 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (? Allow 4 chips when there is strong contextual value.) Tj
+1 0 0 1 54 724 Tm (? Always include at least one action that moves the shopper forward.) Tj
+1 0 0 1 54 710 Tm (? Avoid more than one broad fallback action.) Tj
+1 0 0 1 54 696 Tm (? Avoid showing two actions that solve the same problem.) Tj
+1 0 0 1 54 682 Tm (? Suppress actions already answered or clicked recently.) Tj
+1 0 0 1 54 654 Tm (Suggested Scoring Model) Tj
+1 0 0 1 54 640 Tm (Each candidate action may receive a score using signals such as:) Tj
+1 0 0 1 54 612 Tm (? +4 directly answers likely intent or friction) Tj
+1 0 0 1 54 598 Tm (? +3 matches recent shopper language) Tj
+1 0 0 1 54 584 Tm (? +3 moves the journey forward) Tj
+1 0 0 1 54 570 Tm (? +2 uses trusted structured context) Tj
+1 0 0 1 54 556 Tm (? +2 reduces risk or confusion) Tj
+1 0 0 1 54 542 Tm (? -3 is generic across many scenarios) Tj
+1 0 0 1 54 528 Tm (? -4 duplicates a recent action) Tj
+1 0 0 1 54 514 Tm (? -5 is weakly relevant to the current stage) Tj
+1 0 0 1 54 486 Tm (Journey Surface Specs) Tj
+1 0 0 1 54 458 Tm (1\) Home / Landing / Welcome Card) Tj
+1 0 0 1 54 444 Tm (Primary objective) Tj
+1 0 0 1 54 416 Tm (? Help the shopper start quickly and confidently.) Tj
+1 0 0 1 54 388 Tm (Shopper mindset) Tj
+1 0 0 1 54 360 Tm (? Open-ended browsing) Tj
+1 0 0 1 54 346 Tm (? Early intent formation) Tj
+1 0 0 1 54 332 Tm (? Low willingness to type) Tj
+1 0 0 1 54 304 Tm (NBA role) Tj
+1 0 0 1 54 276 Tm (? Offer strong starting points instead of generic category browsing.) Tj
+1 0 0 1 54 248 Tm (Recommended action mix) Tj
+1 0 0 1 54 220 Tm (? 2 `Start` chips) Tj
+1 0 0 1 54 206 Tm (? 1 `Clarify` chip) Tj
+1 0 0 1 54 192 Tm (? 1 `Support` chip if recent order history exists) Tj
+1 0 0 1 54 164 Tm (Good chip categories) Tj
+1 0 0 1 54 136 Tm (? Shop by concern) Tj
+1 0 0 1 54 122 Tm (? Shop by category) Tj
+1 0 0 1 54 108 Tm (? Shop by routine step) Tj
+1 0 0 1 54 94 Tm (? Resume or support a recent order) Tj
+1 0 0 1 54 80 Tm (? More suggestions / refresh) Tj
+ET
+endstream
+endobj
+22 0 obj
+<< /Length 1863 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 724 Tm (Good examples for beauty) Tj
+1 0 0 1 54 696 Tm (? Shop by skin concern) Tj
+1 0 0 1 54 682 Tm (? Find my ideal sunscreen) Tj
+1 0 0 1 54 668 Tm (? Build a simple skincare routine) Tj
+1 0 0 1 54 654 Tm (? Track my recent order) Tj
+1 0 0 1 54 626 Tm (Ranking signals) Tj
+1 0 0 1 54 598 Tm (? If there is a recent order, boost support entry points) Tj
+1 0 0 1 54 584 Tm (? If the brand wants to push a hero category, boost a guided start chip rather) Tj
+1 0 0 1 54 570 Tm (  than a generic bestseller chip) Tj
+1 0 0 1 54 556 Tm (? If the shopper is returning in-session, boost continuation-oriented chips) Tj
+1 0 0 1 54 528 Tm (Guardrails) Tj
+1 0 0 1 54 500 Tm (? Do not overload the first screen with too many broad options) Tj
+1 0 0 1 54 486 Tm (? Prefer intent-led entries over generic merchandising) Tj
+1 0 0 1 54 458 Tm (Success metrics) Tj
+1 0 0 1 54 430 Tm (? Welcome chip click-through rate) Tj
+1 0 0 1 54 416 Tm (? Time to first meaningful action) Tj
+1 0 0 1 54 402 Tm (? Share of sessions that reach discovery or support flows) Tj
+1 0 0 1 54 374 Tm (2\) Product Discovery Questions \(Conversation Context Setting\)) Tj
+1 0 0 1 54 360 Tm (Primary objective) Tj
+1 0 0 1 54 332 Tm (? Collect the minimum context needed to improve recommendations.) Tj
+1 0 0 1 54 304 Tm (Shopper mindset) Tj
+1 0 0 1 54 276 Tm (? They have a direction, but the system needs more specifics.) Tj
+1 0 0 1 54 248 Tm (NBA role) Tj
+1 0 0 1 54 220 Tm (? Ask focused clarifying questions that unlock better search results.) Tj
+1 0 0 1 54 192 Tm (Recommended action mix) Tj
+1 0 0 1 54 164 Tm (? 3 to 5 `Clarify` chips) Tj
+1 0 0 1 54 150 Tm (? Optional `Skip` action when uncertainty is valid) Tj
+1 0 0 1 54 122 Tm (Good clarifying dimensions) Tj
+1 0 0 1 54 94 Tm (? Concern or goal) Tj
+1 0 0 1 54 80 Tm (? Skin type / hair type / fragrance preference) Tj
+ET
+endstream
+endobj
+23 0 obj
+<< /Length 1782 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (? Usage context) Tj
+1 0 0 1 54 724 Tm (? Climate / environment) Tj
+1 0 0 1 54 710 Tm (? Budget) Tj
+1 0 0 1 54 696 Tm (? Routine preference) Tj
+1 0 0 1 54 682 Tm (? Gender / recipient / self vs gift when relevant) Tj
+1 0 0 1 54 654 Tm (Good examples) Tj
+1 0 0 1 54 626 Tm (? Anti-aging) Tj
+1 0 0 1 54 612 Tm (? Dryness & dehydration) Tj
+1 0 0 1 54 598 Tm (? Sensitive skin) Tj
+1 0 0 1 54 584 Tm (? Lightweight for day) Tj
+1 0 0 1 54 570 Tm (? Fragrance-free) Tj
+1 0 0 1 54 556 Tm (? Not sure) Tj
+1 0 0 1 54 528 Tm (Ranking signals) Tj
+1 0 0 1 54 500 Tm (? Ask the highest-value missing question first) Tj
+1 0 0 1 54 486 Tm (? Prefer one dimension at a time) Tj
+1 0 0 1 54 472 Tm (? Use category-specific questions only when category confidence is high) Tj
+1 0 0 1 54 444 Tm (Guardrails) Tj
+1 0 0 1 54 416 Tm (? Avoid asking questions that do not change ranking or recommendations) Tj
+1 0 0 1 54 402 Tm (? Do not ask more than 3-4 sequential clarifiers without showing value) Tj
+1 0 0 1 54 388 Tm (? Always support a "not sure" path) Tj
+1 0 0 1 54 360 Tm (Success metrics) Tj
+1 0 0 1 54 332 Tm (? Clarifier completion rate) Tj
+1 0 0 1 54 318 Tm (? Result quality after clarifier path) Tj
+1 0 0 1 54 304 Tm (? Drop-off rate inside discovery flows) Tj
+1 0 0 1 54 276 Tm (3\) PLP) Tj
+1 0 0 1 54 262 Tm (Primary objective) Tj
+1 0 0 1 54 234 Tm (? Help the shopper refine results, compare options, and keep momentum.) Tj
+1 0 0 1 54 206 Tm (Shopper mindset) Tj
+1 0 0 1 54 178 Tm (? They have candidate products and need help narrowing choices.) Tj
+1 0 0 1 54 150 Tm (NBA role) Tj
+1 0 0 1 54 122 Tm (? Offer the most relevant refinements and action paths for the current result) Tj
+1 0 0 1 54 108 Tm (  set.) Tj
+1 0 0 1 54 80 Tm (Recommended action mix) Tj
+ET
+endstream
+endobj
+24 0 obj
+<< /Length 1798 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 724 Tm (? 2 `Refine` chips) Tj
+1 0 0 1 54 710 Tm (? 1 `Confidence` or `Compare` chip) Tj
+1 0 0 1 54 696 Tm (? 1 `Redirect` or `Complement` chip if context supports it) Tj
+1 0 0 1 54 668 Tm (Good chip categories) Tj
+1 0 0 1 54 640 Tm (? Top filters inferred from result attributes) Tj
+1 0 0 1 54 626 Tm (? Compare) Tj
+1 0 0 1 54 612 Tm (? Show similar) Tj
+1 0 0 1 54 598 Tm (? Suggest pairing) Tj
+1 0 0 1 54 584 Tm (? More suggestions) Tj
+1 0 0 1 54 570 Tm (? Budget or skin-type refinements) Tj
+1 0 0 1 54 542 Tm (Good examples) Tj
+1 0 0 1 54 514 Tm (? Under $50) Tj
+1 0 0 1 54 500 Tm (? Fragrance-free only) Tj
+1 0 0 1 54 486 Tm (? Best rated) Tj
+1 0 0 1 54 472 Tm (? For sensitive skin) Tj
+1 0 0 1 54 458 Tm (? Compare) Tj
+1 0 0 1 54 430 Tm (Ranking signals) Tj
+1 0 0 1 54 402 Tm (? Use actual result-set attributes, not static category filters) Tj
+1 0 0 1 54 388 Tm (? Boost filters that meaningfully reduce result count) Tj
+1 0 0 1 54 374 Tm (? Boost compare when at least two strong candidates are selected or visible) Tj
+1 0 0 1 54 346 Tm (Guardrails) Tj
+1 0 0 1 54 318 Tm (? Do not show filters that barely change the result set) Tj
+1 0 0 1 54 304 Tm (? Avoid conflicting filters in the same row) Tj
+1 0 0 1 54 290 Tm (? Keep one chip focused on decision support, not just filtering) Tj
+1 0 0 1 54 262 Tm (Success metrics) Tj
+1 0 0 1 54 234 Tm (? Filter chip CTR) Tj
+1 0 0 1 54 220 Tm (? Compare initiation rate) Tj
+1 0 0 1 54 206 Tm (? PDP click-through after filter engagement) Tj
+1 0 0 1 54 192 Tm (? Add-to-cart rate after PLP NBA interaction) Tj
+1 0 0 1 54 164 Tm (4\) PDP) Tj
+1 0 0 1 54 150 Tm (Primary objective) Tj
+1 0 0 1 54 122 Tm (? Build product confidence and move the shopper toward purchase or a better fit.) Tj
+1 0 0 1 54 94 Tm (Shopper mindset) Tj
+ET
+endstream
+endobj
+25 0 obj
+<< /Length 1835 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (? Evaluating a specific product) Tj
+1 0 0 1 54 724 Tm (? Resolving objections) Tj
+1 0 0 1 54 710 Tm (? Deciding whether to buy now) Tj
+1 0 0 1 54 682 Tm (NBA role) Tj
+1 0 0 1 54 654 Tm (? Surface the strongest next action for this product and this shopper.) Tj
+1 0 0 1 54 626 Tm (Recommended action mix) Tj
+1 0 0 1 54 598 Tm (? 1 `Confidence` chip) Tj
+1 0 0 1 54 584 Tm (? 1 `Commit` chip) Tj
+1 0 0 1 54 570 Tm (? 1 `Complement` chip) Tj
+1 0 0 1 54 556 Tm (? 1 `Redirect` chip only when mismatch risk is meaningful) Tj
+1 0 0 1 54 528 Tm (Good chip categories) Tj
+1 0 0 1 54 500 Tm (? Product-specific FAQ) Tj
+1 0 0 1 54 486 Tm (? Product-fit reassurance) Tj
+1 0 0 1 54 472 Tm (? Routine compatibility) Tj
+1 0 0 1 54 458 Tm (? Alternative fit suggestion) Tj
+1 0 0 1 54 444 Tm (? Reviews or usage reassurance) Tj
+1 0 0 1 54 416 Tm (Examples) Tj
+1 0 0 1 54 388 Tm (Skincare:) Tj
+1 0 0 1 54 374 Tm (? Good for sensitive skin?) Tj
+1 0 0 1 54 360 Tm (? How often should I use this?) Tj
+1 0 0 1 54 346 Tm (? What goes after this?) Tj
+1 0 0 1 54 332 Tm (? Need a gentler option?) Tj
+1 0 0 1 54 304 Tm (Makeup:) Tj
+1 0 0 1 54 290 Tm (? What finish does this have?) Tj
+1 0 0 1 54 276 Tm (? Is it long-wearing?) Tj
+1 0 0 1 54 262 Tm (? Good for dry skin?) Tj
+1 0 0 1 54 248 Tm (? Show a more natural finish) Tj
+1 0 0 1 54 220 Tm (Fragrance:) Tj
+1 0 0 1 54 206 Tm (? What does it smell like?) Tj
+1 0 0 1 54 192 Tm (? How long does it last?) Tj
+1 0 0 1 54 178 Tm (? Best for day or night?) Tj
+1 0 0 1 54 164 Tm (? Show a fresher alternative) Tj
+1 0 0 1 54 136 Tm (Guardrails) Tj
+1 0 0 1 54 108 Tm (? Do not default to broad category browsing) Tj
+1 0 0 1 54 94 Tm (? Do not surface operational policies unless signaled by the shopper) Tj
+1 0 0 1 54 80 Tm (? Avoid generic cross-sells that are not routine-aware) Tj
+ET
+endstream
+endobj
+26 0 obj
+<< /Length 1645 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 724 Tm (Success metrics) Tj
+1 0 0 1 54 696 Tm (? PDP chip CTR) Tj
+1 0 0 1 54 682 Tm (? Add-to-cart rate after PDP NBA interaction) Tj
+1 0 0 1 54 668 Tm (? Alternative-fit recovery rate) Tj
+1 0 0 1 54 654 Tm (? FAQ deflection success rate) Tj
+1 0 0 1 54 626 Tm (5\) Cart Confirmation) Tj
+1 0 0 1 54 612 Tm (Primary objective) Tj
+1 0 0 1 54 584 Tm (? Reinforce the cart action and guide the shopper to the best next step.) Tj
+1 0 0 1 54 556 Tm (Shopper mindset) Tj
+1 0 0 1 54 528 Tm (? They just added a product and are deciding whether to continue shopping or) Tj
+1 0 0 1 54 514 Tm (  checkout.) Tj
+1 0 0 1 54 486 Tm (NBA role) Tj
+1 0 0 1 54 458 Tm (? Confirm progress, reduce friction, and offer the most relevant next move.) Tj
+1 0 0 1 54 430 Tm (Recommended action mix) Tj
+1 0 0 1 54 402 Tm (? 1 `Commit` chip) Tj
+1 0 0 1 54 388 Tm (? 1 `Complement` chip) Tj
+1 0 0 1 54 374 Tm (? 1 `Support` or savings chip) Tj
+1 0 0 1 54 360 Tm (? 1 `Redirect` chip only if the product may require a paired item) Tj
+1 0 0 1 54 332 Tm (Good chip categories) Tj
+1 0 0 1 54 304 Tm (? Checkout) Tj
+1 0 0 1 54 290 Tm (? View cart details) Tj
+1 0 0 1 54 276 Tm (? Apply coupon / savings) Tj
+1 0 0 1 54 262 Tm (? Build the rest of the routine) Tj
+1 0 0 1 54 248 Tm (? Add a complementary item) Tj
+1 0 0 1 54 234 Tm (? Keep shopping in the same regimen) Tj
+1 0 0 1 54 206 Tm (Good examples) Tj
+1 0 0 1 54 178 Tm (? Proceed to checkout) Tj
+1 0 0 1 54 164 Tm (? Complete my routine) Tj
+1 0 0 1 54 150 Tm (? Add hydration) Tj
+1 0 0 1 54 136 Tm (? Add a remover) Tj
+1 0 0 1 54 122 Tm (? Apply a coupon) Tj
+1 0 0 1 54 94 Tm (Ranking signals) Tj
+ET
+endstream
+endobj
+27 0 obj
+<< /Length 1943 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (? If the shopper has a near-complete routine, boost checkout) Tj
+1 0 0 1 54 724 Tm (? If there is a strong routine gap, boost one contextual complement chip) Tj
+1 0 0 1 54 710 Tm (? If an inactive coupon exists, boost a savings or qualifying-item action) Tj
+1 0 0 1 54 682 Tm (Guardrails) Tj
+1 0 0 1 54 654 Tm (? Always include at least one checkout-forward action) Tj
+1 0 0 1 54 640 Tm (? Do not overstuff the row with unrelated cross-sells) Tj
+1 0 0 1 54 626 Tm (? Complements must be compatible with what is already in cart) Tj
+1 0 0 1 54 598 Tm (Success metrics) Tj
+1 0 0 1 54 570 Tm (? Checkout continuation rate) Tj
+1 0 0 1 54 556 Tm (? Cart upsell click-through rate) Tj
+1 0 0 1 54 542 Tm (? Coupon application rate) Tj
+1 0 0 1 54 528 Tm (? Time from add-to-cart to next meaningful action) Tj
+1 0 0 1 54 500 Tm (6\) Order Confirmation) Tj
+1 0 0 1 54 486 Tm (Primary objective) Tj
+1 0 0 1 54 458 Tm (? Reassure the shopper and guide them to the most relevant post-purchase action.) Tj
+1 0 0 1 54 430 Tm (Shopper mindset) Tj
+1 0 0 1 54 402 Tm (? Purchase completed) Tj
+1 0 0 1 54 388 Tm (? Curious about shipment, modifications, returns, and what to do next) Tj
+1 0 0 1 54 360 Tm (NBA role) Tj
+1 0 0 1 54 332 Tm (? Support the order while keeping the door open for thoughtful re-engagement.) Tj
+1 0 0 1 54 304 Tm (Recommended action mix) Tj
+1 0 0 1 54 276 Tm (? 1 `Support` chip) Tj
+1 0 0 1 54 262 Tm (? 1 `Support` or self-service chip) Tj
+1 0 0 1 54 248 Tm (? 1 `Complement` or replenishment chip) Tj
+1 0 0 1 54 234 Tm (? 1 `Redirect` only if relevant to order issues) Tj
+1 0 0 1 54 206 Tm (Good chip categories) Tj
+1 0 0 1 54 178 Tm (? Where is my order?) Tj
+1 0 0 1 54 164 Tm (? Return product) Tj
+1 0 0 1 54 150 Tm (? Update shipping details if still editable) Tj
+1 0 0 1 54 136 Tm (? Buy a complementary product) Tj
+1 0 0 1 54 122 Tm (? Reorder or replenish) Tj
+1 0 0 1 54 94 Tm (Good examples) Tj
+ET
+endstream
+endobj
+28 0 obj
+<< /Length 1922 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (? Where is my order?) Tj
+1 0 0 1 54 724 Tm (? Return product) Tj
+1 0 0 1 54 710 Tm (? Buy a gentle cleanser) Tj
+1 0 0 1 54 696 Tm (? Hydrating serum) Tj
+1 0 0 1 54 668 Tm (Ranking signals) Tj
+1 0 0 1 54 640 Tm (? If the order is fresh, boost tracking over return flows) Tj
+1 0 0 1 54 626 Tm (? If the order contains a regimen product, boost one relevant complement) Tj
+1 0 0 1 54 612 Tm (? If return risk is signaled, prioritize policy clarity) Tj
+1 0 0 1 54 584 Tm (Guardrails) Tj
+1 0 0 1 54 556 Tm (? Prioritize support and reassurance first) Tj
+1 0 0 1 54 542 Tm (? Only include re-engagement chips that feel natural after purchase) Tj
+1 0 0 1 54 528 Tm (? Avoid making the confirmation screen feel like a hard sell) Tj
+1 0 0 1 54 500 Tm (Success metrics) Tj
+1 0 0 1 54 472 Tm (? Order support self-service rate) Tj
+1 0 0 1 54 458 Tm (? WISMO initiation rate) Tj
+1 0 0 1 54 444 Tm (? Post-purchase re-engagement CTR) Tj
+1 0 0 1 54 416 Tm (7\) Where Is My Order \(WISMO\) Result) Tj
+1 0 0 1 54 402 Tm (Primary objective) Tj
+1 0 0 1 54 374 Tm (? Resolve the tracking need quickly, then provide the best next support action.) Tj
+1 0 0 1 54 346 Tm (Shopper mindset) Tj
+1 0 0 1 54 318 Tm (? They want status, confidence, and a clear next step if something is wrong.) Tj
+1 0 0 1 54 290 Tm (NBA role) Tj
+1 0 0 1 54 262 Tm (? Pair status information with the most relevant follow-up options.) Tj
+1 0 0 1 54 234 Tm (Recommended action mix) Tj
+1 0 0 1 54 206 Tm (? 1 `Support` chip related to the current shipment status) Tj
+1 0 0 1 54 192 Tm (? 1 `Support` escalation or resolution chip) Tj
+1 0 0 1 54 178 Tm (? 1 `Commit` or re-engagement chip only if appropriate) Tj
+1 0 0 1 54 150 Tm (Status-aware examples) Tj
+1 0 0 1 54 122 Tm (If in transit:) Tj
+1 0 0 1 54 108 Tm (? Track package details) Tj
+1 0 0 1 54 94 Tm (? Delivery estimate) Tj
+1 0 0 1 54 80 Tm (? Change delivery instructions) Tj
+ET
+endstream
+endobj
+29 0 obj
+<< /Length 2122 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 724 Tm (If delayed:) Tj
+1 0 0 1 54 710 Tm (? What caused the delay?) Tj
+1 0 0 1 54 696 Tm (? Contact support) Tj
+1 0 0 1 54 682 Tm (? Start a replacement inquiry) Tj
+1 0 0 1 54 654 Tm (If delivered:) Tj
+1 0 0 1 54 640 Tm (? Start a return) Tj
+1 0 0 1 54 626 Tm (? Report an issue) Tj
+1 0 0 1 54 612 Tm (? Buy again) Tj
+1 0 0 1 54 584 Tm (If partially shipped:) Tj
+1 0 0 1 54 570 Tm (? Track remaining items) Tj
+1 0 0 1 54 556 Tm (? View split shipment details) Tj
+1 0 0 1 54 542 Tm (? Contact support) Tj
+1 0 0 1 54 514 Tm (Ranking signals) Tj
+1 0 0 1 54 486 Tm (? Shipment status should drive the first chip) Tj
+1 0 0 1 54 472 Tm (? Only show escalation when it is relevant) Tj
+1 0 0 1 54 458 Tm (? Re-engagement should be secondary to support completion) Tj
+1 0 0 1 54 430 Tm (Guardrails) Tj
+1 0 0 1 54 402 Tm (? Do not mix too many support paths at once) Tj
+1 0 0 1 54 388 Tm (? Do not upsell before resolving the shipment question) Tj
+1 0 0 1 54 374 Tm (? Keep language calm and action-oriented) Tj
+1 0 0 1 54 346 Tm (Success metrics) Tj
+1 0 0 1 54 318 Tm (? WISMO resolution rate) Tj
+1 0 0 1 54 304 Tm (? Follow-up support self-service rate) Tj
+1 0 0 1 54 290 Tm (? Reduced support deflection failure) Tj
+1 0 0 1 54 262 Tm (Cross-Surface Orchestration Rules) Tj
+1 0 0 1 54 248 Tm (The NBA system should preserve memory across surfaces:) Tj
+1 0 0 1 54 220 Tm (1. If a shopper already answered a clarifier, do not ask it again on the next) Tj
+1 0 0 1 54 206 Tm (   surface.) Tj
+1 0 0 1 54 192 Tm (2. If a shopper dismissed an action twice, suppress it for the remainder of the) Tj
+1 0 0 1 54 178 Tm (   session unless context changes significantly.) Tj
+1 0 0 1 54 164 Tm (3. If a shopper shows high purchase intent, boost commit actions across PLP,) Tj
+1 0 0 1 54 150 Tm (   PDP, and cart.) Tj
+1 0 0 1 54 136 Tm (4. If a shopper shows sensitivity, safety, or fit concerns, boost confidence) Tj
+1 0 0 1 54 122 Tm (   actions before commit actions.) Tj
+1 0 0 1 54 108 Tm (5. If a shopper enters post-purchase support, prioritize support until that need) Tj
+1 0 0 1 54 94 Tm (   is resolved.) Tj
+ET
+endstream
+endobj
+30 0 obj
+<< /Length 1981 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (Fallback Strategy) Tj
+1 0 0 1 54 724 Tm (When contextual confidence is low:) Tj
+1 0 0 1 54 696 Tm (? Use one safe stage-relevant fallback chip) Tj
+1 0 0 1 54 682 Tm (? Prefer category-aware or status-aware fallbacks over global generic actions) Tj
+1 0 0 1 54 668 Tm (? Preserve one action that moves the journey forward) Tj
+1 0 0 1 54 640 Tm (Examples of acceptable fallback chips) Tj
+1 0 0 1 54 612 Tm (? Show best rated) Tj
+1 0 0 1 54 598 Tm (? Compare similar products) Tj
+1 0 0 1 54 584 Tm (? Where is my order?) Tj
+1 0 0 1 54 570 Tm (? Return policy) Tj
+1 0 0 1 54 542 Tm (Measurement Framework) Tj
+1 0 0 1 54 528 Tm (Primary journey metrics) Tj
+1 0 0 1 54 500 Tm (? Chip CTR by surface) Tj
+1 0 0 1 54 486 Tm (? Forward progression rate by surface) Tj
+1 0 0 1 54 472 Tm (? Add-to-cart rate) Tj
+1 0 0 1 54 458 Tm (? Checkout completion rate) Tj
+1 0 0 1 54 444 Tm (? Post-purchase self-service success) Tj
+1 0 0 1 54 416 Tm (Quality metrics) Tj
+1 0 0 1 54 388 Tm (? Repeated chip rate) Tj
+1 0 0 1 54 374 Tm (? Irrelevant chip rate) Tj
+1 0 0 1 54 360 Tm (? Generic fallback usage rate) Tj
+1 0 0 1 54 346 Tm (? Multi-click success rate) Tj
+1 0 0 1 54 318 Tm (Diagnostic metrics) Tj
+1 0 0 1 54 290 Tm (? Time to next meaningful action) Tj
+1 0 0 1 54 276 Tm (? Share of sessions using contextual vs fallback actions) Tj
+1 0 0 1 54 262 Tm (? Alternative-fit recovery rate) Tj
+1 0 0 1 54 248 Tm (? Routine-building engagement rate) Tj
+1 0 0 1 54 220 Tm (Rollout Plan) Tj
+1 0 0 1 54 206 Tm (Phase 1: Taxonomy and rules) Tj
+1 0 0 1 54 192 Tm (? Establish shared action types) Tj
+1 0 0 1 54 178 Tm (? Define stage-aware chip templates) Tj
+1 0 0 1 54 164 Tm (? Replace the most generic hardcoded rows) Tj
+1 0 0 1 54 136 Tm (Phase 2: Context ranking) Tj
+1 0 0 1 54 122 Tm (? Use session and structured product signals to rank candidates) Tj
+1 0 0 1 54 108 Tm (? Suppress duplicates and weak actions) Tj
+1 0 0 1 54 80 Tm (Phase 3: Cross-surface memory) Tj
+ET
+endstream
+endobj
+31 0 obj
+<< /Length 1468 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm (? Carry shopper state across landing, discovery, PLP, PDP, cart, and support) Tj
+1 0 0 1 54 710 Tm (Phase 4: Optimization) Tj
+1 0 0 1 54 696 Tm (? Tune thresholds and labels using interaction data) Tj
+1 0 0 1 54 668 Tm (Open Questions) Tj
+1 0 0 1 54 654 Tm (1. Should each surface reserve one mandatory forward-progression chip?) Tj
+1 0 0 1 54 640 Tm (2. How much merchandising should be allowed in support-oriented contexts?) Tj
+1 0 0 1 54 626 Tm (3. Should post-purchase re-engagement be personalization-driven or rule-based in) Tj
+1 0 0 1 54 612 Tm (   v1?) Tj
+1 0 0 1 54 598 Tm (4. What is the minimum structured data quality needed for high-confidence) Tj
+1 0 0 1 54 584 Tm (   contextual chips on each surface?) Tj
+1 0 0 1 54 556 Tm (Recommended v1 Direction) Tj
+1 0 0 1 54 542 Tm (The first release should create consistency before complexity:) Tj
+1 0 0 1 54 514 Tm (1. Standardize a shared NBA taxonomy across all journey surfaces) Tj
+1 0 0 1 54 500 Tm (2. Make each surface stage-aware) Tj
+1 0 0 1 54 486 Tm (3. Replace generic chip rows with ranked contextual actions) Tj
+1 0 0 1 54 472 Tm (4. Preserve one clear next step at every stage) Tj
+1 0 0 1 54 458 Tm (5. Prioritize support resolution in post-purchase flows) Tj
+1 0 0 1 54 430 Tm (If done well, this will make the entire chat journey feel less like a set of) Tj
+1 0 0 1 54 416 Tm (disconnected prompts and more like a single guided shopping and support system.) Tj
+ET
+endstream
+endobj
+xref
+0 32
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000201 00000 n 
+0000000329 00000 n 
+0000000457 00000 n 
+0000000585 00000 n 
+0000000713 00000 n 
+0000000841 00000 n 
+0000000969 00000 n 
+0000001097 00000 n 
+0000001226 00000 n 
+0000001355 00000 n 
+0000001484 00000 n 
+0000001613 00000 n 
+0000001742 00000 n 
+0000001871 00000 n 
+0000002000 00000 n 
+0000002071 00000 n 
+0000004351 00000 n 
+0000006490 00000 n 
+0000008483 00000 n 
+0000010571 00000 n 
+0000012487 00000 n 
+0000014322 00000 n 
+0000016173 00000 n 
+0000018061 00000 n 
+0000019759 00000 n 
+0000021755 00000 n 
+0000023730 00000 n 
+0000025905 00000 n 
+0000027939 00000 n 
+trailer
+<< /Size 32 /Root 1 0 R >>
+startxref
+29460
+%%EOF
