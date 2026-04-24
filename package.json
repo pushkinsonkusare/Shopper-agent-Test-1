@@ -1,0 +1,28 @@
+{
+  "name": "shopper-agent-test-1",
+  "version": "1.0.0",
+  "description": "Agent-backed beauty shopper prototype",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pushkinsonkusare/Shopper-agent-Test-1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/pushkinsonkusare/Shopper-agent-Test-1/issues"
+  },
+  "homepage": "https://github.com/pushkinsonkusare/Shopper-agent-Test-1#readme",
+  "dependencies": {
+    "csv-parse": "^6.2.1",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "openai": "^6.34.0"
+  }
+}

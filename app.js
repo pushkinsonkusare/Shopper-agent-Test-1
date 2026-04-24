@@ -1,4 +1,6 @@
-const catalogPath = "shiseido-catalog.json";
+const catalogPath = "/api/catalog";
+const agentChatPath = "/api/chat";
+const MAX_AGENT_HISTORY = 8;
 const SHISEIDO_RETURNS_URL =
   "https://www.shiseido.com/us/en/customerservice?cid=returns";
 
@@ -57,6 +59,8 @@ const scrollToBottomBtn = document.getElementById("scrollToBottom");
 let allProducts = [];
 let activeFilter = null;
 let lastQuery = "";
+let lastResultProducts = [];
+let activeRefinementChips = [];
 const conversation = [];
 const selectedPlpProducts = new Map();
 const MAX_COMPARE_PRODUCTS = 4;
@@ -76,6 +80,7 @@ let selectedDurationLabel = null;
 let selectedClimateLabel = null;
 let selectedSupportLabel = null;
 let lastDiscoveryIntent = null;
+let activePdpProduct = null;
 const cartState = {
   items: [],
   /** Item-level coupons: { [itemId]: string[] } (coupon codes per cart line) */
@@ -160,6 +165,16 @@ function getFallbackImageUrl(label, seed = 0) {
   return `data:image/svg+xml;utf8,${svg.replace(/\s+/g, " ").trim()}`;
 }
 
+function isRenderableImagePath(value) {
+  if (!value || typeof value !== "string") return false;
+  const path = value.trim();
+  if (!path) return false;
+  if (path.startsWith("data:")) return true;
+  if (/^https?:\/\//i.test(path)) return true;
+  if (/^(file:\/\/|\/Users\/|\/private\/|[A-Za-z]:\\)/.test(path)) return false;
+  return true;
+}
+
 function rotateImages(images = [], offset = 1) {
   if (!Array.isArray(images) || images.length <= 1) return images || [];
   const normalized = images.filter(Boolean);
@@ -170,11 +185,11 @@ function rotateImages(images = [], offset = 1) {
 
 function getProductCarouselImages(product, fallbackImage) {
   const gallery = Array.isArray(product?.image_gallery)
-    ? product.image_gallery.filter(Boolean)
+    ? product.image_gallery.filter((image) => isRenderableImagePath(image))
     : [];
   const baseImages = gallery.length
     ? gallery
-    : [product?.image_url].filter(Boolean);
+    : [product?.image_url].filter((image) => isRenderableImagePath(image));
   const normalized = baseImages.length ? baseImages : [fallbackImage];
   return rotateImages(normalized, 1);
 }
@@ -256,6 +271,25 @@ function buildCartItem(product, options = {}, fallbackIndex = 0) {
     couponApplicable: couponApplicable ? normalizeCouponCode(couponApplicable) : "",
     promotions,
   };
+}
+
+function getCatalogProductById(productId) {
+  if (productId == null) return null;
+  return allProducts.find((product) => String(product.id) === String(productId)) || null;
+}
+
+function getCartCatalogProducts(state) {
+  return (state?.items || [])
+    .map((item) => getCatalogProductById(item.id))
+    .filter(Boolean);
+}
+
+function getCartRoutineRoleSet(state) {
+  return new Set(
+    getCartCatalogProducts(state)
+      .map((product) => getProductRoutineRole(product))
+      .filter(Boolean)
+  );
 }
 
 function seedCartItems(primaryItem, count = 3) {
@@ -1500,6 +1534,14 @@ function createCartBubble(state, addedItem, options = {}) {
   );
   bubble.append(card);
 
+  if (options.showPostCartNbas) {
+    const sourceProduct = options.sourceProduct || getCatalogProductById(addedItem?.id);
+    const cartUpsellRow = buildCartUpsellChipsRow(sourceProduct, state);
+    if (cartUpsellRow) {
+      bubble.append(cartUpsellRow);
+    }
+  }
+
   const applyTotals = () => {
     const totalsData = calculateCartTotals(
       state.items,
@@ -2007,6 +2049,7 @@ function buildDetailedComparisonRows(products) {
 
 function openProductPdp(product) {
   if (!product) return;
+  activePdpProduct = product;
   addBubble("user", product.name);
   runWithLatency(() => {
     const pdpBubble = createPdpBubble(product);
@@ -2612,6 +2655,67 @@ function applyFilter(products) {
   }
 }
 
+function productMatchesRefinementChip(product, refinementId) {
+  const haystack = getProductTextBlob(product);
+  switch (refinementId) {
+    case "gentle-sensitive":
+      return /\bgentle|sensitive|non-stripping|soothing\b/.test(haystack);
+    case "removes-makeup":
+      return /\bmakeup|waterproof|impurities|remove\b/.test(haystack);
+    case "dry-skin":
+      return /\bdry|hydrat|moisture|barrier\b/.test(haystack);
+    case "oily-skin":
+      return /\boily|oil control|pores|shine\b/.test(haystack);
+    case "fragrance-free":
+      return product.fragrance_free || /\bfragrance-free|unscented\b/.test(haystack);
+    case "best-rated":
+      return Boolean(product.rating && product.rating >= 4.5);
+    case "lightweight-day":
+      return /\blightweight|day|daily\b/.test(haystack);
+    case "rich-night":
+      return /\brich|night|overnight\b/.test(haystack);
+    case "wrinkle-focused":
+      return /\bwrinkle|anti-aging|fine lines\b/.test(haystack);
+    case "with-spf":
+      return /\bspf|sun protection|sunscreen\b/.test(haystack);
+    case "good-under-makeup":
+      return /\bunder makeup|makeup\b/.test(haystack);
+    case "invisible-finish":
+      return /\binvisible finish|clear|no white cast|weightless\b/.test(haystack);
+    case "stick-reapply":
+      return /\bstick|reapply|on-the-go\b/.test(haystack);
+    case "water-resistant":
+      return /\bwater[- ]resistant\b|\bwetforce\b|\bsweat\b|\bsport\b/.test(haystack);
+    case "brightening":
+      return /\bbrightening|radiance|glow|dullness|dark spots\b/.test(haystack);
+    case "hydrating":
+      return /\bhydrat|moisture|plump\b/.test(haystack);
+    case "barrier-support":
+      return /\bbarrier\b/.test(haystack);
+    case "fast-absorbing":
+      return /\bfast-absorbing|absorbs quickly|quickly absorbs\b/.test(haystack);
+    case "dark-circles":
+      return /\bdark circles\b/.test(haystack);
+    case "fine-lines":
+      return /\bfine lines|wrinkle\b/.test(haystack);
+    case "am-routine":
+      return /\bmorning|am routine|day\b/.test(haystack);
+    case "pm-repair":
+      return /\bnight|pm repair|overnight\b/.test(haystack);
+    case "under-50":
+      return Number(product.price) <= 50;
+    default:
+      return true;
+  }
+}
+
+function applyActiveRefinementChipFilters(products) {
+  if (!activeRefinementChips.length) return products;
+  return products.filter((product) =>
+    activeRefinementChips.every((chip) => productMatchesRefinementChip(product, chip.id))
+  );
+}
+
 function applyGenderFilter(products) {
   if (!activeGender) return products;
   return products.filter((product) => product.gender === activeGender);
@@ -2693,34 +2797,233 @@ function addBubble(role, text) {
   updateScrollButton();
 }
 
-function buildFilterChipsRow() {
+function getProductTextBlob(product) {
+  return [
+    product?.name,
+    product?.category,
+    product?.product_type,
+    product?.description,
+    product?.overview,
+    product?.overview_summary,
+    product?.composition,
+    ...(product?.concerns || []),
+    ...(product?.benefits || []),
+    ...(product?.categories || []),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
+function inferResultsCategory(results = [], query = "") {
+  const normalizedQuery = (query || "").toLowerCase();
+  if (/\bsunscreen|spf|sun protector|sun protection\b/.test(normalizedQuery)) return "sunscreen";
+  if (/\bcleanser|cleansing|face wash|foam\b/.test(normalizedQuery)) return "cleanser";
+  if (/\bserum|treatment\b/.test(normalizedQuery)) return "serum";
+  if (/\beye cream|eye care|eye & lip\b/.test(normalizedQuery)) return "eye-care";
+  if (/\bmoisturizer|moisturiser|cream|gel-cream\b/.test(normalizedQuery)) return "moisturizer";
+
+  const combined = [
+    ...results.map((product) => `${product?.category || ""} ${product?.product_type || ""}`),
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  if (/\bcleanser|cleansing|face wash|foam\b/.test(combined)) return "cleanser";
+  if (/\bsunscreen|spf|sun protector|sun protection\b/.test(combined)) return "sunscreen";
+  if (/\bserum|treatment\b/.test(combined)) return "serum";
+  if (/\beye cream|eye care|eye & lip\b/.test(combined)) return "eye-care";
+  if (/\bmoisturizer|moisturiser|cream|gel-cream\b/.test(combined)) return "moisturizer";
+  return "generic";
+}
+
+function resultsContain(results, pattern) {
+  return results.some((product) => pattern.test(getProductTextBlob(product)));
+}
+
+function countConcernMatches(results = []) {
+  const counts = new Map();
+  results.forEach((product) => {
+    (product?.concerns || []).forEach((concern) => {
+      const normalized = String(concern || "").trim();
+      if (!normalized) return;
+      counts.set(normalized, (counts.get(normalized) || 0) + 1);
+    });
+  });
+  return [...counts.entries()]
+    .sort((left, right) => right[1] - left[1])
+    .map(([concern]) => concern);
+}
+
+function createContextualChip(label, query, options = {}) {
+  return {
+    id: options.id || label.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+    label,
+    query,
+    group: options.group || null,
+    filterKey: options.filterKey || null,
+    matchPattern: options.matchPattern || null,
+  };
+}
+
+function getActiveRefinementGroupSet() {
+  return new Set(activeRefinementChips.map((chip) => chip.group).filter(Boolean));
+}
+
+function mergeActiveRefinementChip(nextChip) {
+  if (!nextChip) return activeRefinementChips;
+  return [
+    ...activeRefinementChips.filter((item) => {
+      if (item.id === nextChip.id) return false;
+      if (nextChip.group && item.group === nextChip.group) return false;
+      return true;
+    }),
+    nextChip,
+  ];
+}
+
+function isContextualChipRedundant(chip, query = "") {
+  if (!chip) return true;
+  if (chip.filterKey && chip.filterKey === activeFilter) return true;
+  if (activeRefinementChips.some((item) => item.id === chip.id)) return true;
+  if (chip.group && getActiveRefinementGroupSet().has(chip.group)) return true;
+
+  const normalizedQuery = (query || "").toLowerCase();
+  if (!normalizedQuery) return false;
+
+  if (chip.matchPattern && chip.matchPattern.test(normalizedQuery)) {
+    return true;
+  }
+
+  const normalizedChipQuery = String(chip.query || "").toLowerCase().trim();
+  if (!normalizedChipQuery) return false;
+
+  return normalizedQuery.includes(normalizedChipQuery);
+}
+
+function buildContextualChipConfigs(results = [], query = "") {
+  const category = inferResultsCategory(results, query);
+  const commonConcerns = countConcernMatches(results);
+  const chips = [];
+  const addChip = (chip) => {
+    if (!chip || chips.some((item) => item.label === chip.label)) return;
+    if (isContextualChipRedundant(chip, query)) return;
+    chips.push(chip);
+  };
+
+  if (category === "cleanser") {
+    addChip(
+      createContextualChip("gentle for sensitive skin", "gentle cleanser for sensitive skin", {
+        id: "gentle-sensitive",
+        group: "skin-type",
+        matchPattern: /\bgentle|sensitive\b/,
+      })
+    );
+    if (resultsContain(results, /\bmakeup|waterproof\b/)) {
+      addChip(
+        createContextualChip("removes makeup too", "cleanser that removes makeup too", {
+          id: "removes-makeup",
+          matchPattern: /\bmakeup|waterproof\b/,
+        })
+      );
+    }
+    addChip(
+      createContextualChip("for dry skin", "hydrating cleanser for dry skin", {
+        id: "dry-skin",
+        group: "skin-type",
+        matchPattern: /\bdry skin|hydrating\b/,
+      })
+    );
+    if (resultsContain(results, /\boily|oil control|pores\b/)) {
+      addChip(
+        createContextualChip("for oily skin", "cleanser for oily skin", {
+          id: "oily-skin",
+          group: "skin-type",
+          matchPattern: /\boily skin|oil control|pores\b/,
+        })
+      );
+    }
+    if (resultsContain(results, /\bfragrance-free\b/)) {
+      addChip(
+        createContextualChip("fragrance-free only", "fragrance-free cleanser", {
+          id: "fragrance-free",
+          matchPattern: /\bfragrance[- ]free\b/,
+        })
+      );
+    }
+    addChip(createContextualChip("best rated cleansers", "best rated cleanser", { id: "best-rated", filterKey: "bestRated" }));
+  } else if (category === "moisturizer") {
+    addChip(createContextualChip("lightweight for day", "lightweight moisturizer for daytime", { id: "lightweight-day", matchPattern: /\blightweight|day\b/ }));
+    addChip(createContextualChip("rich cream for night", "rich night cream", { id: "rich-night", matchPattern: /\brich|night\b/ }));
+    addChip(createContextualChip("for dry skin", "moisturizer for dry skin", { id: "dry-skin", group: "skin-type", matchPattern: /\bdry skin\b/ }));
+    addChip(createContextualChip("targets wrinkles", "anti-aging moisturizer for wrinkles", { id: "wrinkle-focused", matchPattern: /\bwrinkle|anti-aging\b/ }));
+    if (resultsContain(results, /\bspf\b/)) {
+      addChip(createContextualChip("with SPF", "moisturizer with SPF", { id: "with-spf", matchPattern: /\bspf\b/ }));
+    }
+  } else if (category === "sunscreen") {
+    addChip(createContextualChip("good under makeup", "sunscreen good under makeup", { id: "good-under-makeup", matchPattern: /\bunder makeup\b/ }));
+    addChip(createContextualChip("for sensitive skin", "sunscreen for sensitive skin", { id: "sensitive-skin", group: "skin-type", matchPattern: /\bsensitive skin\b/ }));
+    addChip(createContextualChip("invisible finish", "invisible finish sunscreen", { id: "invisible-finish", matchPattern: /\binvisible finish|no white cast\b/ }));
+    if (resultsContain(results, /\bstick\b/)) {
+      addChip(createContextualChip("stick for reapplication", "sunscreen stick for reapplication", { id: "stick-reapply", matchPattern: /\bstick|reapplication\b/ }));
+    }
+    if (resultsContain(results, /\bwater|sweat|sport|active\b/)) {
+      addChip(createContextualChip("water-resistant", "water-resistant sunscreen", { id: "water-resistant", matchPattern: /\bwater[- ]resistant|water resistant|sweat|sport|active\b/ }));
+    }
+  } else if (category === "serum") {
+    addChip(createContextualChip("brightening", "brightening serum", { id: "brightening", matchPattern: /\bbrightening|dark spots|dullness\b/ }));
+    addChip(createContextualChip("hydrating", "hydrating serum", { id: "hydrating", matchPattern: /\bhydrating|hydration\b/ }));
+    addChip(createContextualChip("wrinkle-focused", "anti-aging serum for wrinkles", { id: "wrinkle-focused", matchPattern: /\bwrinkle|anti-aging\b/ }));
+    addChip(createContextualChip("barrier support", "barrier support serum", { id: "barrier-support", matchPattern: /\bbarrier\b/ }));
+    addChip(createContextualChip("fast-absorbing", "fast-absorbing serum", { id: "fast-absorbing", matchPattern: /\bfast-absorbing\b/ }));
+  } else if (category === "eye-care") {
+    addChip(createContextualChip("for dark circles", "eye cream for dark circles", { id: "dark-circles", matchPattern: /\bdark circles\b/ }));
+    addChip(createContextualChip("for fine lines", "eye cream for fine lines", { id: "fine-lines", matchPattern: /\bfine lines|wrinkle\b/ }));
+    addChip(createContextualChip("for AM routine", "lightweight eye cream for morning", { id: "am-routine", matchPattern: /\bmorning|am routine\b/ }));
+    addChip(createContextualChip("for PM repair", "repairing eye cream for night", { id: "pm-repair", matchPattern: /\bnight|pm repair\b/ }));
+  }
+
+  if (chips.length < 4) {
+    commonConcerns.slice(0, 3).forEach((concern) => {
+      const normalized = concern.toLowerCase();
+      if (normalized.includes("wrinkle")) {
+        addChip(createContextualChip("wrinkle-focused", `${category === "generic" ? "skincare" : category} for wrinkles`));
+      } else if (normalized.includes("dry")) {
+        addChip(createContextualChip("for dry skin", `${category === "generic" ? "skincare" : category} for dry skin`, { group: "skin-type" }));
+      } else if (normalized.includes("dark") || normalized.includes("dull")) {
+        addChip(createContextualChip("brightening", `brightening ${category === "generic" ? "skincare" : category}`));
+      } else if (normalized.includes("redness") || normalized.includes("sensitive")) {
+        addChip(createContextualChip("for sensitive skin", `${category === "generic" ? "skincare" : category} for sensitive skin`, { group: "skin-type" }));
+      }
+    });
+  }
+
+  addChip(createContextualChip("under $50", query || `${category} under $50`, { id: "under-50", filterKey: "under50" }));
+
+  return chips.slice(0, 5);
+}
+
+function buildFilterChipsRow(results = [], query = "") {
   const chipRow = document.createElement("div");
   chipRow.className = "chips";
-  const filters = [
-    { key: "under25", label: "under $25" },
-    { key: "under50", label: "under $50" },
-    { key: "fragranceFree", label: "fragrance free" },
-    { key: "sensitive", label: "sensitive skin" },
-    { key: "vegan", label: "vegan" },
-    { key: "bestRated", label: "best rated" },
-    { key: "more", label: "more suggestions" },
-  ];
-
-  const visibleFilters = filters.filter((filter) => filter.key !== activeFilter);
-  chipRow.innerHTML = visibleFilters
+  const filters = buildContextualChipConfigs(results, query);
+  const filterMap = new Map(filters.map((filter) => [filter.id, filter]));
+  chipRow.innerHTML = filters
     .map(
       (filter) =>
-        `<button class="chip" data-filter="${filter.key}">${filter.label}</button>`
+        `<button class="chip" data-refinement-id="${filter.id}" data-filter="${filter.filterKey || ""}" data-query="${filter.query || ""}">${filter.label}</button>`
     )
     .join("");
   chipRow.addEventListener("click", (event) => {
     const button = event.target.closest(".chip");
     if (!button) return;
-    const filterKey = button.dataset.filter || null;
-    activeFilter = filterKey;
-    addBubble("user", button.textContent.trim());
+    const refinement = filterMap.get(button.dataset.refinementId || "");
+    if (!refinement) return;
+    activeRefinementChips = mergeActiveRefinementChip(refinement);
+    const nextQuery = buildStackedRefinementQuery(lastResultProducts, lastQuery);
+    addBubble("user", refinement.label);
     hideNbaPillSet(chipRow);
-    runSearch(lastQuery, null, false, lastIntentFilters);
+    runSearch(nextQuery, refinement.label, false, lastIntentFilters);
   });
   return chipRow;
 }
@@ -2793,7 +3096,11 @@ function buildSingleSelectionChipsRow(product) {
         chatEl.append(createPdpFollowupChipsRow(product, button.dataset.actionKey));
         updateScrollButton();
       });
+      return;
     }
+    runWithLatency(() => {
+      showSelectionActionResults(product, button.dataset.actionKey);
+    }, LATENCY_MS, "Finding recommendations...");
   });
   return chipRow;
 }
@@ -2838,6 +3145,375 @@ function buildCompareChipsRow() {
   return chipRow;
 }
 
+function getNormalizedProductFamily(product) {
+  return (product?.collections || [])
+    .map((item) => String(item || "").trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function getNormalizedProductConcerns(product) {
+  return (product?.concerns || [])
+    .map((item) => String(item || "").trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function getNormalizedSkinType(product) {
+  return String(product?.skin_type || "")
+    .trim()
+    .toLowerCase();
+}
+
+function getProductRoutineRole(product) {
+  const haystack = `${product?.category || ""} ${product?.product_type || ""} ${product?.name || ""}`.toLowerCase();
+  if (/\bcleanser|cleansing|face wash|foam\b/.test(haystack)) return "cleanser";
+  if (/\bsunscreen|spf|sun protector|sun protection\b/.test(haystack)) return "sunscreen";
+  if (/\bserum|treatment\b/.test(haystack)) return "serum";
+  if (/\beye cream|eye care|eye & lip\b/.test(haystack)) return "eye-care";
+  if (/\bmoisturizer|moisturiser|cream|gel-cream|emulsion\b/.test(haystack)) return "moisturizer";
+  return "skincare";
+}
+
+function getSuggestedPairingRoles(product) {
+  const role = getProductRoutineRole(product);
+  switch (role) {
+    case "cleanser":
+      return ["serum", "moisturizer", "sunscreen"];
+    case "serum":
+      return ["moisturizer", "sunscreen", "cleanser"];
+    case "moisturizer":
+      return ["cleanser", "serum", "sunscreen"];
+    case "sunscreen":
+      return ["cleanser", "serum", "moisturizer"];
+    case "eye-care":
+      return ["serum", "moisturizer", "cleanser"];
+    default:
+      return ["cleanser", "serum", "moisturizer"];
+  }
+}
+
+function scorePairingCandidate(sourceProduct, candidate, preferredRoles) {
+  if (!candidate || !sourceProduct) return Number.NEGATIVE_INFINITY;
+  if (candidate.id === sourceProduct.id) return Number.NEGATIVE_INFINITY;
+
+  const candidateRole = getProductRoutineRole(candidate);
+  if (!preferredRoles.includes(candidateRole)) return Number.NEGATIVE_INFINITY;
+
+  let score = (candidate.rating || 0) * 0.6;
+  score += Math.max(0, 3 - preferredRoles.indexOf(candidateRole)) * 2;
+
+  const sourceFamilies = getNormalizedProductFamily(sourceProduct);
+  const candidateFamilies = getNormalizedProductFamily(candidate);
+  if (sourceFamilies.some((family) => candidateFamilies.includes(family))) score += 4;
+
+  const sourceConcerns = getNormalizedProductConcerns(sourceProduct);
+  const candidateConcerns = getNormalizedProductConcerns(candidate);
+  score += sourceConcerns.filter((concern) => candidateConcerns.includes(concern)).length * 1.5;
+
+  const sourceSkinType = getNormalizedSkinType(sourceProduct);
+  const candidateSkinType = getNormalizedSkinType(candidate);
+  if (sourceSkinType && candidateSkinType && candidateSkinType.includes(sourceSkinType)) score += 1.5;
+
+  if (candidateRole === "sunscreen" && /\bspf\b/i.test(candidate.description || "")) score += 1;
+  if (candidateRole === "cleanser" && /\bgentle|hydrating|non-stripping\b/i.test(getProductTextBlob(candidate))) score += 1;
+  if (candidateRole === "moisturizer" && /\bhydrat|barrier|moisture\b/i.test(getProductTextBlob(candidate))) score += 1;
+
+  return score;
+}
+
+function getPairingCandidates(product) {
+  const preferredRoles = getSuggestedPairingRoles(product);
+  return allProducts
+    .map((candidate) => ({
+      product: candidate,
+      score: scorePairingCandidate(product, candidate, preferredRoles),
+    }))
+    .filter((entry) => Number.isFinite(entry.score) && entry.score > 0)
+    .sort((left, right) => right.score - left.score)
+    .map((entry) => entry.product)
+    .slice(0, 10);
+}
+
+function scoreSimilarCandidate(sourceProduct, candidate) {
+  if (!candidate || !sourceProduct) return Number.NEGATIVE_INFINITY;
+  if (candidate.id === sourceProduct.id) return Number.NEGATIVE_INFINITY;
+
+  if (getProductRoutineRole(sourceProduct) !== getProductRoutineRole(candidate)) {
+    return Number.NEGATIVE_INFINITY;
+  }
+
+  let score = (candidate.rating || 0) * 0.6;
+  const sourceFamilies = getNormalizedProductFamily(sourceProduct);
+  const candidateFamilies = getNormalizedProductFamily(candidate);
+  if (sourceFamilies.some((family) => candidateFamilies.includes(family))) score += 4;
+
+  const sourceConcerns = getNormalizedProductConcerns(sourceProduct);
+  const candidateConcerns = getNormalizedProductConcerns(candidate);
+  score += sourceConcerns.filter((concern) => candidateConcerns.includes(concern)).length * 1.5;
+
+  const sourceSkinType = getNormalizedSkinType(sourceProduct);
+  const candidateSkinType = getNormalizedSkinType(candidate);
+  if (sourceSkinType && candidateSkinType && candidateSkinType.includes(sourceSkinType)) score += 1.5;
+
+  return score;
+}
+
+function getSimilarCandidates(product) {
+  return allProducts
+    .map((candidate) => ({
+      product: candidate,
+      score: scoreSimilarCandidate(product, candidate),
+    }))
+    .filter((entry) => Number.isFinite(entry.score) && entry.score > 0)
+    .sort((left, right) => right.score - left.score)
+    .map((entry) => entry.product)
+    .slice(0, 10);
+}
+
+function getCartUpsellCandidates(sourceProduct, state, preferredRoles) {
+  const source = sourceProduct || null;
+  if (!source) return [];
+  const roles = Array.isArray(preferredRoles) && preferredRoles.length
+    ? preferredRoles
+    : getSuggestedPairingRoles(source);
+  const cartIds = new Set((state?.items || []).map((item) => String(item.id)));
+  return allProducts
+    .map((candidate) => ({
+      product: candidate,
+      score: scorePairingCandidate(source, candidate, roles),
+    }))
+    .filter((entry) => {
+      if (!Number.isFinite(entry.score) || entry.score <= 0) return false;
+      return !cartIds.has(String(entry.product.id));
+    })
+    .sort((left, right) => right.score - left.score)
+    .map((entry) => entry.product)
+    .slice(0, 10);
+}
+
+function showCartUpsellResults(sourceProduct, results, query, message, emptyMessage) {
+  if (!results.length) {
+    addBubble("assistant", emptyMessage || "I couldn't find strong add-ons for your cart yet.");
+    updateScrollButton();
+    return;
+  }
+
+  lastResultProducts = results;
+  lastQuery = query;
+  activeFilter = null;
+  activeRefinementChips = [];
+  lastIntentFilters = null;
+  lastDiscoveryIntent = null;
+
+  const carouselBubble = renderCarouselPage(results, message, 0);
+  chatEl.append(carouselBubble);
+  renderNextBestActions();
+  scrollChatElementIntoView(carouselBubble);
+  updateScrollButton();
+}
+
+function showSelectionActionResults(product, actionKey) {
+  const isPairing = actionKey === "suggest-pairing";
+  const results = isPairing ? getPairingCandidates(product) : getSimilarCandidates(product);
+
+  if (!results.length) {
+    addBubble(
+      "assistant",
+      isPairing
+        ? `I couldn't find strong pairings for ${product.name} yet.`
+        : `I couldn't find similar options to ${product.name} yet.`
+    );
+    updateScrollButton();
+    return;
+  }
+
+  lastResultProducts = results;
+  lastQuery = isPairing ? `pairing for ${product.name}` : `similar to ${product.name}`;
+  activeFilter = null;
+  activeRefinementChips = [];
+  lastIntentFilters = null;
+  lastDiscoveryIntent = null;
+
+  const message = isPairing
+    ? `Here are products that pair well with ${product.name}.`
+    : `Here are products similar to ${product.name}.`;
+
+  const carouselBubble = renderCarouselPage(results, message, 0);
+  chatEl.append(carouselBubble);
+  renderNextBestActions();
+  scrollChatElementIntoView(carouselBubble);
+  updateScrollButton();
+}
+
+function buildCartUpsellChipConfigs(sourceProduct, state) {
+  if (!sourceProduct) return [];
+
+  const sourceRole = getProductRoutineRole(sourceProduct);
+  const cartRoles = getCartRoutineRoleSet(state);
+  const chips = [];
+  const addChip = (chip) => {
+    if (!chip || chips.some((item) => item.key === chip.key)) return;
+    chips.push(chip);
+  };
+
+  const addRoleChip = (key, label, roles, query, message, emptyMessage) => {
+    const results = getCartUpsellCandidates(sourceProduct, state, roles);
+    if (!results.length) return;
+    addChip({
+      key,
+      label,
+      query,
+      onSelect: () =>
+        showCartUpsellResults(sourceProduct, results, query, message, emptyMessage),
+    });
+  };
+
+  addRoleChip(
+    "complete-routine",
+    "Complete my routine",
+    getSuggestedPairingRoles(sourceProduct),
+    `routine add-ons for ${sourceProduct.name}`,
+    `Added to cart. Here are a few smart add-ons to build your routine.`,
+    `I couldn't find strong routine add-ons for ${sourceProduct.name} yet.`
+  );
+
+  switch (sourceRole) {
+    case "sunscreen":
+      if (!cartRoles.has("cleanser")) {
+        addRoleChip(
+          "add-remover",
+          "Add a remover",
+          ["cleanser"],
+          `cleanser to remove sunscreen`,
+          `Here are some removers that pair well with ${sourceProduct.name}.`,
+          `I couldn't find a strong remover pairing for ${sourceProduct.name} yet.`
+        );
+      }
+      if (!cartRoles.has("moisturizer")) {
+        addRoleChip(
+          "add-hydration",
+          "Add hydration",
+          ["moisturizer"],
+          `hydrating moisturizer to pair with sunscreen`,
+          `Here are some hydrating add-ons that go well with ${sourceProduct.name}.`,
+          `I couldn't find a strong hydration add-on for ${sourceProduct.name} yet.`
+        );
+      }
+      break;
+    case "cleanser":
+      if (!cartRoles.has("moisturizer")) {
+        addRoleChip(
+          "add-hydration",
+          "Add hydration",
+          ["moisturizer"],
+          `hydrating moisturizer after cleanser`,
+          `Here are some hydrating products to follow ${sourceProduct.name}.`,
+          `I couldn't find a strong hydration pairing for ${sourceProduct.name} yet.`
+        );
+      }
+      if (!cartRoles.has("sunscreen")) {
+        addRoleChip(
+          "add-daily-spf",
+          "Add a daily sunscreen",
+          ["sunscreen"],
+          `daily sunscreen after cleanser`,
+          `Here are some daily SPF options to go with ${sourceProduct.name}.`,
+          `I couldn't find a strong daily SPF pairing for ${sourceProduct.name} yet.`
+        );
+      }
+      break;
+    case "serum":
+      if (!cartRoles.has("moisturizer")) {
+        addRoleChip(
+          "seal-with-moisture",
+          "Add hydration",
+          ["moisturizer"],
+          `moisturizer after serum`,
+          `Here are some moisturizers that pair well with ${sourceProduct.name}.`,
+          `I couldn't find a strong moisturizer pairing for ${sourceProduct.name} yet.`
+        );
+      }
+      if (!cartRoles.has("sunscreen")) {
+        addRoleChip(
+          "finish-with-spf",
+          "Add a daily sunscreen",
+          ["sunscreen"],
+          `daily sunscreen after serum`,
+          `Here are some SPF options that complete the routine after ${sourceProduct.name}.`,
+          `I couldn't find a strong SPF pairing for ${sourceProduct.name} yet.`
+        );
+      }
+      break;
+    case "moisturizer":
+      if (!cartRoles.has("serum")) {
+        addRoleChip(
+          "add-serum",
+          "Add a serum",
+          ["serum"],
+          `serum before moisturizer`,
+          `Here are some serums that pair well with ${sourceProduct.name}.`,
+          `I couldn't find a strong serum pairing for ${sourceProduct.name} yet.`
+        );
+      }
+      if (!cartRoles.has("sunscreen")) {
+        addRoleChip(
+          "top-with-spf",
+          "Add a daily sunscreen",
+          ["sunscreen"],
+          `daily sunscreen after moisturizer`,
+          `Here are some SPF options to layer with ${sourceProduct.name}.`,
+          `I couldn't find a strong SPF pairing for ${sourceProduct.name} yet.`
+        );
+      }
+      break;
+    default:
+      if (!cartRoles.has("moisturizer")) {
+        addRoleChip(
+          "add-hydration",
+          "Add hydration",
+          ["moisturizer"],
+          `hydrating skincare add-on`,
+          `Here are some hydrating add-ons that can build out your routine.`,
+          `I couldn't find a strong hydration add-on yet.`
+        );
+      }
+      break;
+  }
+
+  addChip({
+    key: "shop-something-else",
+    label: "Shop something else",
+    onSelect: () => addCategoryClarifyPrompt(),
+  });
+
+  return chips.slice(0, 4);
+}
+
+function buildCartUpsellChipsRow(sourceProduct, state) {
+  const chipConfigs = buildCartUpsellChipConfigs(sourceProduct, state);
+  if (!chipConfigs.length) return null;
+
+  const chipRow = document.createElement("div");
+  chipRow.className = "chips";
+  chipRow.innerHTML = chipConfigs
+    .map((chip) => `<button class="chip" data-cart-chip-key="${chip.key}">${chip.label}</button>`)
+    .join("");
+
+  const chipMap = new Map(chipConfigs.map((chip) => [chip.key, chip]));
+  chipRow.addEventListener("click", (event) => {
+    const button = event.target.closest(".chip");
+    if (!button) return;
+    const chip = chipMap.get(button.dataset.cartChipKey || "");
+    if (!chip) return;
+    addBubble("user", chip.label);
+    hideNbaPillSet(chipRow);
+    runWithLatency(() => {
+      chip.onSelect?.();
+    }, LATENCY_MS, "Finding add-ons...");
+  });
+
+  return chipRow;
+}
+
 function renderNextBestActions() {
   const existing = chatEl.querySelector(".chips");
   if (existing) existing.remove();
@@ -2849,7 +3525,7 @@ function renderNextBestActions() {
     const [product] = selectedPlpProducts.values();
     chipRow = buildSingleSelectionChipsRow(product);
   } else {
-    chipRow = buildFilterChipsRow();
+    chipRow = buildFilterChipsRow(lastResultProducts, lastQuery);
   }
 
   hideNbaPillSets(chipRow);
@@ -3077,6 +3753,158 @@ function assistantCopy(query, count) {
     return "Here are a few popular picks to get you started.";
   }
   return `Thanks for your patience. I found ${count} options for “${query}”.`;
+}
+
+function getCategoryResultsLabel(results = [], query = "") {
+  switch (inferResultsCategory(results, query)) {
+    case "cleanser":
+      return "cleansers";
+    case "sunscreen":
+      return "sunscreens";
+    case "serum":
+      return "serums";
+    case "eye-care":
+      return "eye creams";
+    case "moisturizer":
+      return "moisturizers";
+    default:
+      return "products";
+  }
+}
+
+function getCategoryQueryLabel(results = [], query = "") {
+  switch (inferResultsCategory(results, query)) {
+    case "cleanser":
+      return "cleanser";
+    case "sunscreen":
+      return "sunscreen";
+    case "serum":
+      return "serum";
+    case "eye-care":
+      return "eye cream";
+    case "moisturizer":
+      return "moisturizer";
+    default:
+      return "product";
+  }
+}
+
+function getRefinementPhrase(label, results = [], query = "") {
+  const normalizedLabel = String(label || "").trim().toLowerCase();
+  const categoryLabel = getCategoryResultsLabel(results, query);
+
+  if (normalizedLabel.includes("removes makeup")) {
+    return `that are good at removing makeup`;
+  }
+  if (normalizedLabel.includes("gentle")) {
+    return `that are gentle on skin`;
+  }
+  if (normalizedLabel.includes("dry skin")) {
+    return `for dry skin`;
+  }
+  if (normalizedLabel.includes("oily skin")) {
+    return `for oily skin`;
+  }
+  if (normalizedLabel.includes("sensitive skin")) {
+    return `for sensitive skin`;
+  }
+  if (normalizedLabel.includes("fragrance-free")) {
+    return `that are fragrance-free`;
+  }
+  if (normalizedLabel.includes("best rated")) {
+    return `with stronger ratings`;
+  }
+  if (normalizedLabel.includes("lightweight")) {
+    return `with a lightweight daytime feel`;
+  }
+  if (normalizedLabel.includes("rich cream")) {
+    return `that are better for a richer night routine`;
+  }
+  if (normalizedLabel.includes("targets wrinkles") || normalizedLabel.includes("wrinkle-focused")) {
+    return `that focus on wrinkles and visible signs of aging`;
+  }
+  if (normalizedLabel.includes("with spf")) {
+    return `with SPF`;
+  }
+  if (normalizedLabel.includes("good under makeup")) {
+    return `that wear well under makeup`;
+  }
+  if (normalizedLabel.includes("invisible finish")) {
+    return `with a more invisible finish`;
+  }
+  if (normalizedLabel.includes("stick for reapplication")) {
+    return `that are easy to reapply on the go`;
+  }
+  if (normalizedLabel.includes("water-resistant")) {
+    return `with water resistance`;
+  }
+  if (normalizedLabel.includes("brightening")) {
+    return `with a brightening focus`;
+  }
+  if (normalizedLabel.includes("hydrating")) {
+    return `with a hydrating focus`;
+  }
+  if (normalizedLabel.includes("barrier support")) {
+    return `that focus on barrier support`;
+  }
+  if (normalizedLabel.includes("fast-absorbing")) {
+    return `that absorb quickly`;
+  }
+  if (normalizedLabel.includes("dark circles")) {
+    return `that focus on dark circles`;
+  }
+  if (normalizedLabel.includes("fine lines")) {
+    return `that focus on fine lines`;
+  }
+  if (normalizedLabel.includes("am routine") || normalizedLabel.includes("morning")) {
+    return `that fit well into a morning routine`;
+  }
+  if (normalizedLabel.includes("pm repair") || normalizedLabel.includes("night")) {
+    return `that make more sense for nighttime repair`;
+  }
+  if (normalizedLabel.includes("under $50")) {
+    return `under $50`;
+  }
+
+  return `for ${label}`;
+}
+
+function joinRefinementPhrases(phrases = []) {
+  if (phrases.length === 0) return "";
+  if (phrases.length === 1) return phrases[0];
+  if (phrases.length === 2) return `${phrases[0]} and ${phrases[1]}`;
+  return `${phrases.slice(0, -1).join(", ")}, and ${phrases[phrases.length - 1]}`;
+}
+
+function buildRefinementAcknowledgement(filterLabel, query, results = []) {
+  const activeLabels = activeRefinementChips.map((chip) => chip.label).filter(Boolean);
+  const labels = activeLabels.length ? activeLabels : filterLabel ? [filterLabel] : [];
+  if (labels.length === 0) return assistantCopy(query, results.length);
+
+  const categoryLabel = getCategoryResultsLabel(results, query);
+  const phrases = labels
+    .map((label) => getRefinementPhrase(label, results, query))
+    .filter(Boolean);
+
+  if (results.length === 0) {
+    const labelList = joinRefinementPhrases(labels.map((label) => label.toLowerCase()));
+    return `I couldn't find any ${categoryLabel} that match ${labelList}.`;
+  }
+
+  if (!phrases.length) {
+    return `Sure, here are some ${categoryLabel}.`;
+  }
+
+  return `Sure, here are some ${categoryLabel} ${joinRefinementPhrases(phrases)}.`;
+}
+
+function buildStackedRefinementQuery(results = [], query = "") {
+  const categoryQueryLabel = getCategoryQueryLabel(results, query);
+  const fragments = [
+    categoryQueryLabel,
+    ...activeRefinementChips.map((chip) => chip.query).filter(Boolean),
+  ];
+  return [...new Set(fragments.map((item) => String(item || "").trim()).filter(Boolean))].join(" ");
 }
 
 const LATENCY_MS = 2000;
@@ -4102,6 +4930,20 @@ function summarizeIngredients(product) {
     : extractIngredientsFromComposition(product.composition);
   const normalized = list.map((item) => String(item).trim()).filter(Boolean);
   if (!normalized.length) {
+    const formulaHighlights = [
+      product.overview_summary,
+      product.overview,
+      ...(Array.isArray(product.features) ? product.features : []),
+      product.description,
+    ]
+      .map((item) => String(item || "").replace(/\s+/g, " ").trim())
+      .filter(Boolean)
+      .join(" ");
+
+    if (formulaHighlights) {
+      return `I don't see a full ingredient list in the catalog for this item, but the product details mention: ${formulaHighlights}`;
+    }
+
     return "I don't have the ingredient list for this item yet.";
   }
   const top = normalized.slice(0, 6);
@@ -4174,9 +5016,122 @@ function answerPdpFaq(product, key) {
     case "ingredients": {
       return summarizeIngredients(product);
     }
+    case "summary": {
+      const concerns = Array.isArray(product.concerns) ? product.concerns.slice(0, 3) : [];
+      const benefits = Array.isArray(product.benefits) ? product.benefits.slice(0, 3) : [];
+      const benefitText = benefits.length ? ` Key benefits include ${benefits.join(", ")}.` : "";
+      const concernText = concerns.length ? ` It is positioned around ${concerns.join(", ")}.` : "";
+      return `${description}${benefitText}${concernText}`;
+    }
+    case "who-is-it-for": {
+      const concerns = Array.isArray(product.concerns) ? product.concerns.slice(0, 3) : [];
+      const skinType = product.skin_type || "most skin types";
+      const concernText = concerns.length ? ` especially if you're focused on ${concerns.join(", ")}` : "";
+      return `This product looks best suited for ${skinType}${concernText}.`;
+    }
+    case "price": {
+      const currentPrice = formatPrice(Number(product.price || 0));
+      const msrpText =
+        product.msrp && product.msrp > product.price
+          ? ` It is currently ${currentPrice}, down from ${formatPrice(Number(product.msrp))}.`
+          : ` It is currently ${currentPrice}.`;
+      return `${product.name}.${msrpText}`;
+    }
     default:
       return "Let me know what you'd like to know about this item.";
   }
+}
+
+function inferPdpQuestionKey(query, product) {
+  const normalized = (query || "").toLowerCase().trim();
+  if (!normalized || !product) return null;
+
+  if (/\b(ingredient|ingredients|what's in it|what is in it|what is this made of)\b/.test(normalized)) {
+    return "ingredients";
+  }
+  if (/\b(how do i use|how to use|how do i apply|how should i use|apply|application|routine|when do i use)\b/.test(normalized)) {
+    return "how-to-use";
+  }
+  if (/\b(fragrance|fragrance-free|unscented|scented)\b/.test(normalized)) {
+    return "fragrance-free";
+  }
+  if (/\b(return|returns|refund|cancel|cancellation)\b/.test(normalized)) {
+    return "cancellation-policy";
+  }
+  if (/\b(long wear|long-wearing|last all day|lasting)\b/.test(normalized)) {
+    return "long-wear";
+  }
+  if (/\b(color-safe|colour-safe)\b/.test(normalized)) {
+    return "color-safe";
+  }
+  if (/\b(scent|smell|fragrance profile|notes)\b/.test(normalized)) {
+    return "scent-profile";
+  }
+  if (/\b(price|cost|how much)\b/.test(normalized)) {
+    return "price";
+  }
+  if (/\b(who is it for|which skin type|skin type|best for|good for)\b/.test(normalized)) {
+    return "who-is-it-for";
+  }
+  if (
+    /\b(tell me more|more about|what does this do|what is this|about this|about it|this product|this cream|this serum|this moisturizer)\b/.test(
+      normalized
+    )
+  ) {
+    return "summary";
+  }
+
+  const productName = (product.name || "").toLowerCase();
+  const productType = (product.product_type || "").toLowerCase();
+  if (
+    normalized.includes(productName) ||
+    (productType && normalized.includes(productType)) ||
+    /\b(this|it|this one|that one)\b/.test(normalized)
+  ) {
+    return "summary";
+  }
+
+  return null;
+}
+
+function answerFreeformPdpQuestion(product, query) {
+  const key = inferPdpQuestionKey(query, product);
+  if (!key) return null;
+  return { key, answer: answerPdpFaq(product, key) };
+}
+
+function getPdpProductFromDom() {
+  const pdpBubbles = Array.from(chatEl.querySelectorAll(".pdp-bubble[data-product-id]"));
+  const lastPdpBubble = pdpBubbles[pdpBubbles.length - 1];
+  if (!lastPdpBubble) return null;
+
+  const productId = lastPdpBubble.dataset.productId;
+  if (!productId) return null;
+
+  return (
+    allProducts.find((product) => String(product.id) === String(productId)) ||
+    activePdpProduct ||
+    null
+  );
+}
+
+function getPdpProductFromConversation() {
+  const recentMessages = [...conversation].reverse();
+  for (const entry of recentMessages) {
+    if (entry?.role !== "user") continue;
+    const text = String(entry.text || "").trim().toLowerCase();
+    if (!text) continue;
+
+    const matchedProduct = allProducts.find(
+      (product) => String(product.name || "").trim().toLowerCase() === text
+    );
+    if (matchedProduct) return matchedProduct;
+  }
+  return null;
+}
+
+function getActivePdpContext() {
+  return activePdpProduct || getPdpProductFromDom() || getPdpProductFromConversation();
 }
 
 function buildPdpActions(product) {
@@ -4239,9 +5194,18 @@ function createPdpFollowupChipsRow(product, excludeKey) {
 }
 
 function handlePdpAction(product, actionType, actionKey, label) {
+  activePdpProduct = product;
   addBubble("user", label);
 
   if (actionType === "search") {
+    if (actionKey === "cross-sell") {
+      runSearch("cleanser", null, false, {
+        discoveryIntent: {
+          product_category: "cleanser",
+        },
+      });
+      return;
+    }
     runSearch(label, null, false, lastIntentFilters);
     return;
   }
@@ -4284,8 +5248,10 @@ function formatColorLabel(colors) {
 }
 
 function createPdpBubble(product) {
+  activePdpProduct = product;
   const bubble = document.createElement("div");
   bubble.className = "bubble assistant pdp-bubble";
+  bubble.dataset.productId = String(product.id || "");
 
   const card = document.createElement("div");
   card.className = "pdp-card";
@@ -4300,11 +5266,18 @@ function createPdpBubble(product) {
   const fallbackImage = getFallbackImageUrl(product.name, 3);
   const images = getProductCarouselImages(product, fallbackImage);
   let currentIndex = 0;
-  const resolveImageSrc = (path) =>
-    path.startsWith("data:") ? path : new URL(path, window.location.href).href;
+  const resolveImageSrc = (path) => {
+    if (!isRenderableImagePath(path)) return fallbackImage;
+    return path.startsWith("data:") || /^https?:\/\//i.test(path)
+      ? path
+      : new URL(path, window.location.href).href;
+  };
   image.src = resolveImageSrc(images[currentIndex]);
   image.alt = product.name;
   image.loading = "lazy";
+  image.addEventListener("error", () => {
+    image.src = fallbackImage;
+  });
   imageFrame.append(image);
 
   const leftArrow = document.createElement("button");
@@ -4796,7 +5769,10 @@ function createPdpBubble(product) {
         }
       }
 
-      const cartBubble = createCartBubble(cartState, newItem);
+      const cartBubble = createCartBubble(cartState, newItem, {
+        showPostCartNbas: true,
+        sourceProduct: productForCart,
+      });
       chatEl.append(cartBubble);
       scrollChatElementIntoView(cartBubble);
       updateScrollButton();
@@ -5051,7 +6027,103 @@ function addSupportMoreChips(container) {
   });
   container.append(moreWrapper);
 }
-function runSearch(query, filterLabel, includeUserBubble, intentFilters) {
+function normalizeCatalogProduct(product) {
+  const normalizedRating = product.rating ?? product.star_rating ?? null;
+  const normalizedReviews =
+    product.reviews ?? product.review_count ?? product.reviewCount ?? null;
+  return {
+    ...product,
+    rating: normalizedRating,
+    reviews: normalizedReviews,
+    compare_attributes:
+      product.compare_attributes || buildMockCompareAttributes(product),
+  };
+}
+
+async function requestAgentResponse(query, intentFilters) {
+  const response = await fetch(agentChatPath, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query,
+      activeFilter,
+      refinementIds: activeRefinementChips.map((chip) => chip.id),
+      intentFilters: intentFilters || lastIntentFilters || null,
+      conversation: conversation.slice(-MAX_AGENT_HISTORY),
+      maxResults: 5,
+    }),
+  });
+
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(payload?.error || "Agent request failed.");
+  }
+
+  return payload;
+}
+
+function resolveAgentProducts(agentPayload) {
+  const productsById = new Map(allProducts.map((product) => [String(product.id), product]));
+  const ids = Array.isArray(agentPayload?.recommendedProductIds)
+    ? agentPayload.recommendedProductIds.map((id) => String(id))
+    : [];
+
+  const matchedProducts = ids
+    .map((id) => productsById.get(id))
+    .filter(Boolean);
+
+  if (matchedProducts.length > 0) return matchedProducts;
+
+  if (!Array.isArray(agentPayload?.products)) return [];
+  return agentPayload.products.map((product) => normalizeCatalogProduct(product));
+}
+
+function renderAgentResults(query, agentPayload, filterLabel) {
+  const results = resolveAgentProducts(agentPayload);
+  lastResultProducts = results;
+  const contextualReply = buildRefinementAcknowledgement(filterLabel, query, results);
+  const reply = filterLabel
+    ? contextualReply
+    : agentPayload?.reply?.trim() || contextualReply;
+  const followupQuestion = agentPayload?.followupQuestion?.trim();
+  const needsFollowup = Boolean(agentPayload?.needsFollowup);
+
+  if (results.length > 0) {
+    const carouselBubble = renderCarouselPage(results, reply, 0);
+    chatEl.append(carouselBubble);
+    renderNextBestActions();
+    scrollChatElementIntoView(carouselBubble);
+    updateScrollButton();
+  } else if (reply) {
+    addBubble("assistant", reply);
+  }
+
+  if (needsFollowup && followupQuestion && followupQuestion !== reply) {
+    addBubble("assistant", followupQuestion);
+    scrollChatElementIntoView(chatEl.lastElementChild);
+    updateScrollButton();
+  }
+}
+
+function runLocalSearch(query, intentFilters, filterLabel) {
+  let results = allProducts.filter((p) => matchesQuery(p, query));
+  results = applyIntentFilters(results, intentFilters || lastIntentFilters);
+  results = applyFilter(results);
+  results = applyActiveRefinementChipFilters(results);
+  results = results.slice(0, 10);
+  lastResultProducts = results;
+
+  const reply = buildRefinementAcknowledgement(filterLabel, query, results);
+  const carouselBubble = renderCarouselPage(results, reply, 0);
+  chatEl.append(carouselBubble);
+  renderNextBestActions();
+  scrollChatElementIntoView(carouselBubble);
+  updateScrollButton();
+}
+
+async function runSearch(query, filterLabel, includeUserBubble, intentFilters) {
   if (!query) return;
   lastQuery = query;
   lastIntentFilters = intentFilters || lastIntentFilters;
@@ -5075,22 +6147,14 @@ function runSearch(query, filterLabel, includeUserBubble, intentFilters) {
 
   const loadingBubble = addLoadingBubble();
 
-  let results = [];
-  let reply = null;
-  results = allProducts.filter((p) => matchesQuery(p, query));
-  results = applyIntentFilters(results, intentFilters || lastIntentFilters);
-  results = applyFilter(results);
-  results = results.slice(0, 10);
-
-  setTimeout(() => {
+  try {
+    const agentPayload = await requestAgentResponse(query, intentFilters);
     loadingBubble.remove();
-    reply = assistantCopy(query, results.length);
-    const carouselBubble = renderCarouselPage(results, reply, 0);
-    chatEl.append(carouselBubble);
-    renderNextBestActions();
-    scrollChatElementIntoView(carouselBubble);
-    updateScrollButton();
-  }, LATENCY_MS);
+    renderAgentResults(query, agentPayload, filterLabel);
+  } catch (_error) {
+    loadingBubble.remove();
+    runLocalSearch(query, intentFilters, filterLabel);
+  }
 }
 
 function isReturnPolicyQuery(query) {
@@ -5115,18 +6179,31 @@ function handleSearch() {
     );
     return;
   }
-  const intent = parseIntent(query);
-  const hasFilters = hasDiscoveryIntentFilters(intent.discoveryIntent);
-  if (!hasFilters) {
-    lastIntentFilters = null;
-    lastDiscoveryIntent = null;
+  const pdpContext = getActivePdpContext();
+  if (pdpContext) {
+    activePdpProduct = pdpContext;
+    const pdpAnswer = answerFreeformPdpQuestion(pdpContext, query);
+    if (pdpAnswer) {
+      addBubble("user", query);
+      searchInput.value = "";
+      runWithLatency(
+        () => {
+          chatEl.append(createFaqAnswerBubble(pdpContext, pdpAnswer.key));
+          chatEl.append(createPdpFollowupChipsRow(pdpContext, pdpAnswer.key));
+          updateScrollButton();
+        },
+        LATENCY_MS,
+        "Looking that up..."
+      );
+      return;
+    }
   }
-  runSearch(
-    intent.queryText || query,
-    null,
-    true,
-    hasFilters ? { discoveryIntent: intent.discoveryIntent } : null
-  );
+  activeFilter = null;
+  activeRefinementChips = [];
+  lastIntentFilters = null;
+  lastDiscoveryIntent = null;
+  activePdpProduct = null;
+  runSearch(query, null, true, null);
   searchInput.value = "";
 }
 
@@ -5175,18 +6252,9 @@ fetch(catalogPath)
     return response.json();
   })
   .then((catalog) => {
-    allProducts = (catalog.products || []).map((product) => {
-      const normalizedRating =
-        product.rating ?? product.star_rating ?? null;
-      const normalizedReviews =
-        product.reviews ?? product.review_count ?? product.reviewCount ?? null;
-      return {
-        ...product,
-        rating: normalizedRating,
-        reviews: normalizedReviews,
-        compare_attributes: buildMockCompareAttributes(product),
-      };
-    });
+    allProducts = (catalog.products || []).map((product) =>
+      normalizeCatalogProduct(product)
+    );
     allProducts = shuffle(allProducts);
     setupEvents();
     addIntroSection();
@@ -5195,6 +6263,6 @@ fetch(catalogPath)
   .catch(() => {
     addBubble(
       "assistant",
-      "Could not load the catalog. Open this page via http://localhost:8080 (run: python3 -m http.server 8080 in the project folder)."
+      "Could not load the catalog. Start the local app server with `npm start`, then open http://localhost:8080."
     );
   });
