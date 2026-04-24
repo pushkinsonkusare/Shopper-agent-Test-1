@@ -3709,48 +3709,157 @@ function addIntroSection() {
   chatEl.append(intro);
   updateScrollButton();
 
+  const addGuidedStarterChips = (options = []) => {
+    const chipRow = document.createElement("div");
+    chipRow.className = "chips";
+    chipRow.innerHTML = options
+      .map(
+        (option) =>
+          `<button class="chip" data-label="${option.label}">${option.label}</button>`
+      )
+      .join("");
+    hideNbaPillSets(chipRow);
+    chipRow.addEventListener("click", (event) => {
+      const button = event.target.closest(".chip");
+      if (!button) return;
+      const option = options.find((item) => item.label === button.dataset.label);
+      if (!option) return;
+      addBubble("user", option.label);
+      hideNbaPillSet(chipRow);
+      runSearch(option.query, null, false, option.intentFilters || null);
+    });
+    chatEl.append(chipRow);
+    scrollChatElementIntoView(chatEl.lastElementChild);
+    updateScrollButton();
+  };
+
   const starters = document.createElement("div");
   starters.className = "starter-chips";
-  starters.innerHTML = `
-    <button class="chip chip-wide" data-prompt="Shop by skin concern">
-      Shop by skin concern
-    </button>
-    <button class="chip chip-wide" data-prompt="Find your ideal eyecare">
-      Find your ideal eyecare
-    </button>
-    <button class="chip chip-wide" data-prompt="Best SPF for sensitive skin">
-      Best SPF for sensitive skin
-    </button>
-    <div class="starter-row">
-      <button class="chip" data-prompt="Track my recent order">Track my recent order</button>
-      <button class="chip chip-icon" data-prompt="More suggestions" aria-label="More suggestions">
-        ↻
-      </button>
-    </div>
-  `;
+  let starterSetIndex = 0;
+  const renderStarterSet = () => {
+    const visibleActions = STARTER_PROMPT_SETS[starterSetIndex] || STARTER_PROMPT_SETS[0];
+    starters.innerHTML = `
+      ${visibleActions
+        .map(
+          (action) => `
+            <button class="chip chip-wide" data-action-id="${action.id}">
+              ${action.label}
+            </button>
+          `
+        )
+        .join("")}
+      <div class="starter-row">
+        <button class="chip" data-action-id="${STARTER_SUPPORT_ACTION.id}">
+          ${STARTER_SUPPORT_ACTION.label}
+        </button>
+        <button class="chip chip-icon" data-action-id="rotate-starters" aria-label="More suggestions">
+          ↻
+        </button>
+      </div>
+    `;
+  };
+  renderStarterSet();
   hideNbaPillSets(starters);
   starters.addEventListener("click", (event) => {
     const button = event.target.closest(".chip");
     if (!button) return;
+    const actionId = button.dataset.actionId || "";
+    if (actionId === "rotate-starters") {
+      starterSetIndex = (starterSetIndex + 1) % STARTER_PROMPT_SETS.length;
+      renderStarterSet();
+      return;
+    }
+    const action =
+      STARTER_PROMPT_SETS.flat().find((item) => item.id === actionId) ||
+      (STARTER_SUPPORT_ACTION.id === actionId ? STARTER_SUPPORT_ACTION : null);
+    if (!action) return;
     hideNbaPillSet(starters);
-    const prompt = button.dataset.prompt;
-    if (!prompt) return;
-    if (prompt === "Shop by skin concern") {
-      addBubble("user", prompt);
+    if (action.type === "flow" && action.flow === "skin-concern") {
+      addBubble("user", action.label);
       runWithLatency(
         () => {
+          addBubble(
+            "assistant",
+            "Tell me the skin concern you want help with, and I'll guide you toward the right products."
+          );
           addSkinConcernPrompt();
         },
         LATENCY_MS,
-        "Finding concerns..."
+        "Personalizing your routine..."
       );
       return;
     }
-    if (prompt === "Find your ideal eyecare") {
-      openSkinConcernsBottomSheet();
+    if (action.type === "flow" && action.flow === "eye-care") {
+      addBubble("user", action.label);
+      runWithLatency(
+        () => {
+          addBubble(
+            "assistant",
+            "Tell me the eye-area concern you want to solve, and I'll narrow down the best eye-care options."
+          );
+          openSkinConcernsBottomSheet();
+        },
+        LATENCY_MS,
+        "Personalizing eye care..."
+      );
       return;
     }
-    searchInput.value = prompt;
+    if (action.type === "flow" && action.flow === "sunscreen") {
+      addBubble("user", action.label);
+      runWithLatency(
+        () => {
+          addBubble("assistant", "What matters most in your sunscreen?");
+          addGuidedStarterChips([
+            {
+              label: "Sensitive skin",
+              query: "sunscreen for sensitive skin",
+              intentFilters: {
+                discoveryIntent: {
+                  product_category: "sunscreen",
+                  skin_type: "sensitive",
+                },
+              },
+            },
+            {
+              label: "No white cast",
+              query: "invisible finish sunscreen",
+              intentFilters: {
+                discoveryIntent: {
+                  product_category: "sunscreen",
+                },
+              },
+            },
+            {
+              label: "Good under makeup",
+              query: "sunscreen good under makeup",
+              intentFilters: {
+                discoveryIntent: {
+                  product_category: "sunscreen",
+                },
+              },
+            },
+            {
+              label: "Outdoor activity",
+              query: "water-resistant sunscreen",
+              intentFilters: {
+                discoveryIntent: {
+                  product_category: "sunscreen",
+                },
+              },
+            },
+          ]);
+        },
+        LATENCY_MS,
+        "Personalizing sunscreen picks..."
+      );
+      return;
+    }
+    if (action.type === "search") {
+      addBubble("user", action.label);
+      runSearch(action.query, null, false, action.intentFilters || null);
+      return;
+    }
+    searchInput.value = action.query;
     handleSearch();
   });
   chatEl.append(starters);
@@ -4180,6 +4289,71 @@ function addRoombaLevelQuestion(selections) {
   });
 }
 
+const STARTER_PROMPT_SETS = [
+  [
+    {
+      id: "routine-by-concern",
+      label: "Build a routine for my skin concern",
+      type: "flow",
+      flow: "skin-concern",
+    },
+    {
+      id: "choose-eye-cream",
+      label: "Help me choose an eye cream",
+      type: "flow",
+      flow: "eye-care",
+    },
+    {
+      id: "choose-sunscreen",
+      label: "Find the right sunscreen for me",
+      type: "flow",
+      flow: "sunscreen",
+    },
+  ],
+  [
+    {
+      id: "dark-spots",
+      label: "Find products for dark spots",
+      type: "search",
+      query: "dark spots skincare",
+      intentFilters: {
+        discoveryIntent: {
+          concern: "dark spots",
+        },
+      },
+    },
+    {
+      id: "dryness",
+      label: "Help with dryness & dehydration",
+      type: "search",
+      query: "dryness dehydration skincare",
+      intentFilters: {
+        discoveryIntent: {
+          concern: "dryness",
+        },
+      },
+    },
+    {
+      id: "gentle-sensitive",
+      label: "Show gentle options for sensitive skin",
+      type: "search",
+      query: "gentle skincare for sensitive skin",
+      intentFilters: {
+        discoveryIntent: {
+          skin_type: "sensitive",
+        },
+      },
+    },
+  ],
+];
+
+const STARTER_SUPPORT_ACTION = {
+  id: "track-order",
+  label: "Track my recent order",
+  type: "search-input",
+  query: "Track my recent order",
+};
+
 function openSkinConcernsBottomSheet() {
   const overlay = document.createElement("div");
   overlay.className = "bottom-sheet-overlay";
@@ -4273,12 +4447,13 @@ function openSkinConcernsBottomSheet() {
     addBubble("user", "Skin concerns: " + labels.join(", "));
     runWithLatency(
       () => {
-        addBubble(
-          "assistant",
-          "Thanks. We'll use that to find your ideal eye care. (Next: age, sensitivity, texture.)"
-        );
-        scrollChatElementIntoView(chatEl.lastElementChild);
-        updateScrollButton();
+        const primaryConcern = labels[0] || "dark circles";
+        runSearch(`eye cream for ${primaryConcern.toLowerCase()}`, null, false, {
+          discoveryIntent: {
+            product_category: "eye-care",
+            concern: primaryConcern.toLowerCase(),
+          },
+        });
       },
       LATENCY_MS,
       "Finding recommendations..."
