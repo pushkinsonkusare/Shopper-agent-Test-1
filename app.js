@@ -122,7 +122,9 @@ function triggerHaptic() {
 }
 
 function formatPrice(value) {
-  return `$${value.toFixed(0)}`;
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return "Price unavailable";
+  return `$${numeric.toFixed(0)}`;
 }
 
 function formatReviewCount(value) {
