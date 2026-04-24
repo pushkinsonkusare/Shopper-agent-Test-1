@@ -1,7 +1,12 @@
 const STATIC_CATALOG_PATH = "./shiseido-catalog.json";
-const agentChatPath = "/api/chat";
 const IS_GITHUB_PAGES =
   typeof window !== "undefined" && /github\.io$/i.test(window.location.hostname);
+const APP_CONFIG =
+  typeof window !== "undefined" && window.SHOPPER_AGENT_CONFIG
+    ? window.SHOPPER_AGENT_CONFIG
+    : {};
+const API_BASE_URL = String(APP_CONFIG.apiBaseUrl || "").replace(/\/+$/, "");
+const agentChatPath = API_BASE_URL ? `${API_BASE_URL}/api/chat` : "/api/chat";
 const MAX_AGENT_HISTORY = 8;
 const SHISEIDO_RETURNS_URL =
   "https://www.shiseido.com/us/en/customerservice?cid=returns";
@@ -6049,7 +6054,7 @@ function extractCatalogProducts(payload) {
 }
 
 async function requestAgentResponse(query, intentFilters) {
-  if (IS_GITHUB_PAGES) {
+  if (IS_GITHUB_PAGES && !API_BASE_URL) {
     throw new Error("Static deployment does not expose the chat API.");
   }
 

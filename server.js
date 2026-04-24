@@ -57,6 +57,17 @@ const openai = process.env.OPENAI_API_KEY
   ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   : null;
 
+app.use((request, response, next) => {
+  response.setHeader("Access-Control-Allow-Origin", "*");
+  response.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (request.method === "OPTIONS") {
+    response.status(204).end();
+    return;
+  }
+  next();
+});
+
 app.use(express.json({ limit: "1mb" }));
 
 function readJson(filePath) {
@@ -803,10 +814,14 @@ app.use((_request, response) => {
   response.sendFile(path.join(ROOT_DIR, "index.html"));
 });
 
-app.listen(PORT, () => {
-  console.log(
-    `Shopper agent server running on http://localhost:${PORT} using ${catalogPayload.source}${
-      openai ? ` with model ${OPENAI_MODEL}` : " without OPENAI_API_KEY"
-    }`
-  );
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(
+      `Shopper agent server running on http://localhost:${PORT} using ${catalogPayload.source}${
+        openai ? ` with model ${OPENAI_MODEL}` : " without OPENAI_API_KEY"
+      }`
+    );
+  });
+}
+
+module.exports = { app };
