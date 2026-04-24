@@ -796,6 +796,13 @@ app.post("/api/chat", async (request, response) => {
 
     response.json(result);
   } catch (error) {
+    console.error("Agent request failed", {
+      message: error?.message,
+      status: error?.status || error?.response?.status,
+      code: error?.code,
+      type: error?.type,
+      name: error?.name,
+    });
     const rankedCandidates = getRankedCandidates({
       query,
       activeFilter: cleanText(request.body?.activeFilter),
